@@ -2,8 +2,9 @@
 
 namespace App\Livewire\AdminGeneral\Dashboard;
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 
-
+#[Layout('components.layouts.collapsable')]
 class UserController extends Component
 {
 

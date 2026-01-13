@@ -6,7 +6,10 @@ use Exception;
 use Laravel\Fortify\Actions\GenerateNewRecoveryCodes;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Livewire\Attributes\Layout;
+use Illuminate\View\View;
 
+#[Layout('components.layouts.cuenta')]
 class RecoveryCodes extends Component
 {
     #[Locked]
@@ -18,6 +21,14 @@ class RecoveryCodes extends Component
     public function mount(): void
     {
         $this->loadRecoveryCodes();
+    }
+
+    /**
+     * Render the Livewire component view.
+     */
+    public function render(): View
+    {
+        return view('livewire.settings.two-factor.recovery-codes');
     }
 
     /**

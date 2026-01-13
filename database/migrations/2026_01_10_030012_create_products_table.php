@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateProductsTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('products', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->nullable();
+            $table->text('description')->nullable();
+            $table->json('multimedia')->nullable();
+            $table->unsignedBigInteger('id_category')->nullable();
+            $table->decimal('price', 16, 4)->nullable();
+            $table->unsignedBigInteger('id_price_aditional')->nullable();
+            $table->unsignedBigInteger('id_inventory')->nullable();
+            $table->unsignedBigInteger('id_envio')->nullable();
+            $table->json('id_variants')->nullable();
+            $table->unsignedBigInteger('id_organization_product')->nullable();
+            $table->unsignedBigInteger('id_status_product')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('products');
+    }
+}

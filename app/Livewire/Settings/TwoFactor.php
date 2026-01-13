@@ -12,7 +12,9 @@ use Livewire\Attributes\Locked;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Symfony\Component\HttpFoundation\Response;
+use Livewire\Attributes\Layout;
 
+#[Layout('components.layouts.cuenta')]
 class TwoFactor extends Component
 {
     #[Locked]

@@ -13,7 +13,7 @@
 
 <x-rk.flux::layouts.app.collapsable :title="$title ?? null">
     <flux:main>
-        @if ($breadcrumbs->isNotEmpty() && $breadcrumbs->count() > 1)
+       {{--  @if ($breadcrumbs->isNotEmpty() && $breadcrumbs->count() > 1)
             <flux:breadcrumbs class="mb-4">
 
                 @foreach ($breadcrumbs as $breadcrumb)
@@ -23,7 +23,7 @@
                 @endforeach
 
             </flux:breadcrumbs>
-        @endif
+        @endif  
 
         <flux:heading size="xl">
             {{ $activeNode?->getLabel() ?? '' }}
@@ -31,7 +31,7 @@
         <flux:subheading>
             {{ $activeNode?->getDescription() ?? '' }}
         </flux:subheading>
-        <flux:separator variant="subtle" class="mt-2 mb-4" />
+        <flux:separator variant="subtle" class="mt-2 mb-4" /> --}}
         {{ $slot }}
     </flux:main>
 </x-rk.flux::layouts.app.collapsable>

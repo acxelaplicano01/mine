@@ -26,6 +26,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'id_employee',
+        'id_customer',
+        'id_market',
+        'id_status_user',
     ];
 
     /**
@@ -63,5 +67,13 @@ class User extends Authenticatable
             ->take(2)
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+    /**
+     * Get the market that owns the user
+     */
+    public function market()
+    {
+        return $this->belongsTo(\App\Models\Market\Markets::class, 'id_market');
     }
 }

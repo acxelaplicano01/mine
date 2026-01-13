@@ -36,7 +36,7 @@
     @fluxAppearance
 </head>
 
-<body class="min-h-screen bg-white dark:bg-zinc-800">
+<body class="min-h-screen bg-neutral-100 dark:bg-neutral-900">
 
     <!-- HEADER -->
     <flux:header sticky container class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
@@ -65,34 +65,84 @@
         <flux:spacer />
 
         <flux:navbar class="me-1.5 space-x-0.5 rtl:space-x-reverse py-0!">
-
+            <flux:separator vertical class="my-1"/>
             <!-- Aquí puedes agregar ítems extra como buscar o ayuda -->
+            <flux:navbar.item icon="magnifying-glass" />
+            <flux:button x-data x-on:click="$flux.dark = ! $flux.dark" icon="moon" variant="subtle" aria-label="Toggle dark mode" />
         </flux:navbar>
+
+        <!-- Notificaciones -->
+         <flux:dropdown position="top" align="end">
+            <flux:navbar.item icon="bell" badge badge:color="red" badge:position="top" badge:circle badge:variant="outline"/>
+
+            <flux:navmenu class="max-w-[20rem]">
+                <div class="px-2 py-1.5 flex items-center justify-between">
+                    <flux:text size="sm">Notificaciones</flux:text>
+
+                    <div class="flex items-center gap-1">
+                        <flux:button variant="ghost" size="sm" icon="check-circle" icon:variant="outline" aria-label="Marcar todos leídos" data-action="check" />
+                        <flux:button variant="ghost" size="sm" icon="funnel" icon:variant="outline" aria-label="Solo no leídos" data-action="filter-unread" />
+                    </div>
+                </div>
+
+                <flux:navmenu.separator />
+                 {{-- Notifications list --}}
+                <div>
+                    
+                        <x-rk.flux.notification-item
+                            id="1"
+                            href="#"
+                            avatar="https://unavatar.io/x/calebporzio"
+                            title="Joseph Mcfall"
+                            message='<span class="font-semibold">Joseph Mcfall</span> and <span class="font-medium">5 others</span> started following you.'
+                            time="10 minutes ago"
+                            badgeColor="bg-green-600"
+                            read="false"
+                        />
+                    
+
+                    <flux:navmenu.separator />
+
+                    
+                        <x-rk.flux.notification-item
+                            id="2"
+                            href="#"
+                            avatar="https://unavatar.io/x/calebporzio"
+                            title="Bonnie Green"
+                            message='<span class="font-semibold">Bonnie Green</span> and <span class="font-medium">141 others</span> love your story.'
+                            time="44 minutes ago"
+                            badgeColor="bg-red-600"
+                            read="false"
+                        />
+                </div>
+
+                <flux:navmenu.separator />
+
+                <flux:navmenu.item href="#" class="justify-center text-center text-sm text-zinc-500 dark:text-zinc-400 truncate">Ver todas las notificaciones</flux:navmenu.item>
+            </flux:navmenu>
+        </flux:dropdown>
 
         <!-- Desktop User Menu -->
         <flux:dropdown position="top" align="end">
-            <flux:profile class="cursor-pointer" :initials="auth()->user()->initials()" />
+            <flux:profile avatar="https://unavatar.io/x/calebporzio" class="cursor-pointer" :initials="auth()->user()->initials()"/>
 
-            <flux:menu>
-                <flux:menu.radio.group>
+            <flux:navmenu class="max-w-[20rem]">
+                <div class="px-2 py-1.5">
+                    <flux:text size="sm">Conectado como</flux:text>
+                    <flux:menu.radio.group>
                     <div class="p-0 text-sm font-normal">
                         <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-                            <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
-                                <span
-                                    class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
-                                    {{ auth()->user()->initials() }}
-                                </span>
-                            </span>
-
                             <div class="grid flex-1 text-start text-sm leading-tight">
-                                <span class="truncate font-semibold">{{ auth()->user()->firts_name }}</span>
+                                <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
                                 <span class="truncate text-xs">{{ auth()->user()->email }}</span>
                             </div>
+                            <flux:badge color="lime" size="xs">Gratis</flux:badge>
                         </div>
                     </div>
                 </flux:menu.radio.group>
+                </div>
 
-                <flux:menu.separator />
+               <flux:menu.separator />
 
                 <x-rk.flux::components.simple-node :node="$configNode" />
 
@@ -100,24 +150,30 @@
 
                 </flux:menu.radio.group>
 
+                <div class="px-2 py-1.5">
+                    <flux:text size="sm" class="pl-7">Tiendas</flux:text>
+                </div>
+
+                <flux:navmenu.item href="#" icon="check" class="text-zinc-800 dark:text-white truncate">Mi tienda Admin</flux:navmenu.item>
+                <flux:navmenu.item href="#" icon="building-storefront" icon:variant="outline" class="text-zinc-800 dark:text-white truncate">Todas mis tiendas</flux:navmenu.item>
+
+                <flux:navmenu.separator />
+
+                <flux:navmenu.item :href="route('profile.edit')" icon="user-circle" icon:variant="outline" wire:navigate>{{ __('Perfil') }}</flux:menu.item>
+                <flux:navmenu.item :href="route('user_cuenta')" icon="cog-6-tooth" icon:variant="outline" wire:navigate>{{ __('Cuenta') }}</flux:navmenu.item>
+                <flux:navmenu.item :href="route('user_cuenta')" icon="lock-closed" icon:variant="outline" wire:navigate>{{ __('Privacidad') }}</flux:navmenu.item>
+                <flux:navmenu.item :href="route('notifications.edit')" icon="bell" icon:variant="outline" wire:navigate>{{ __('Notificaciones') }}</flux:navmenu.item>
+                <flux:navmenu.item :href="route('login')" icon="paint-brush" icon:variant="outline" wire:navigate>{{ __('Preferencias') }}</flux:navmenu.item>
+
                 <flux:menu.separator />
 
                 <form method="POST" action="{{ route('logout') }}" class="w-full">
                     @csrf
-                    <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
-                        {{ __('Log Out') }}
-                    </flux:menu.item>
+                    <flux:navmenu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
+                        {{ __('Cerrar sesión') }}
+                    </flux:navmenu.item>
                 </form>
-                <section class="w-full">
-                    <flux:menu.separator />
-                    <flux:radio.group x-data variant="segmented" x-model="$flux.appearance">
-                        <flux:radio value="light" icon="sun">{{ __('Light') }}</flux:radio>
-                        <flux:radio value="dark" icon="moon">{{ __('Dark') }}</flux:radio>
-                        <flux:radio value="system" icon="computer-desktop">{{ __('System') }}</flux:radio>
-                    </flux:radio.group>
-                </section>
-
-            </flux:menu>
+            </flux:navmenu>
         </flux:dropdown>
     </flux:header>
 
@@ -128,7 +184,7 @@
                 href="#"
                 logo="https://fluxui.dev/img/demo/logo.png"
                 logo:dark="https://fluxui.dev/img/demo/dark-mode-logo.png"
-                name="Acme Inc."
+                name="MINE"
             />
 
             <flux:sidebar.collapse class="in-data-flux-sidebar-on-desktop:not-in-data-flux-sidebar-collapsed-desktop:-mr-2" />
@@ -165,17 +221,16 @@
         </flux:sidebar.nav>
 
         <flux:dropdown position="top" align="start" class="max-lg:hidden">
-            <flux:sidebar.profile avatar="https://fluxui.dev/img/demo/user.png" name="Olivia Martin" />
-
+            <flux:sidebar.profile avatar="https://fluxui.dev/img/demo/user.png" name="{{ auth()->user()->name }}" />
             <flux:menu>
                 <flux:menu.radio.group>
-                    <flux:menu.radio checked>Olivia Martin</flux:menu.radio>
-                    <flux:menu.radio>Truly Delta</flux:menu.radio>
+                    <flux:menu.radio checked>{{ auth()->user()->name }}</flux:menu.radio>
+                    <flux:menu.radio>Usuario de prueba</flux:menu.radio>
                 </flux:menu.radio.group>
 
                 <flux:menu.separator />
 
-                <flux:menu.item icon="arrow-right-start-on-rectangle">Logout</flux:menu.item>
+                <flux:menu.item icon="arrow-right-start-on-rectangle">Cerrar sesión</flux:menu.item>
             </flux:menu>
         </flux:dropdown>
     </flux:sidebar>
