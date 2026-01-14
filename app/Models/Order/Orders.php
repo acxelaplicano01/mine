@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Product\Products;
 use App\Models\Customer\Customers;
 use App\Models\Envio\Envios;
+use App\Models\Market\Markets;
 
 class Orders extends Model
 {
@@ -65,5 +66,10 @@ class Orders extends Model
     public function envio()
     {
         return $this->belongsTo(Envios::class, 'id_envio');
+    }
+
+    public function market()
+    {
+        return $this->belongsTo(Markets::class, 'id_market');
     }
 }

@@ -1,13 +1,19 @@
 <div class="min-h-screen">
+    {{-- Mensaje de éxito --}}
+    @if (session()->has('message'))
+        <div class="px-4 sm:px-6 lg:px-8 py-4">
+            <flux:callout dismissible variant="success" icon="check-circle" heading="{{ session('message') }}" />
+        </div>
+    @endif
     {{-- Header principal --}}
     <div>
-        <div class="px-2 sm:px-6 lg:px-8">
+        <div class="px-2 sm:px-4 lg:px-2">
             <div class="flex items-center justify-between mb-4">
                 <div>
                    
                 </div>
                 <div class="flex items-center gap-3">
-                    <flux:button variant="filled" size="sm">
+                    <flux:button variant="filled" size="sm" wire:click="openExportModal" icon="arrow-up-tray">
                         Exportar
                     </flux:button>
                     <flux:dropdown>
@@ -28,20 +34,36 @@
         </div>
     </div>
 
-    {{-- Mensaje de éxito --}}
-    @if (session()->has('message'))
-        <div class="px-4 sm:px-6 lg:px-8 pt-4">
-            <flux:callout dismissible variant="success" icon="check-circle" heading="{{ session('message') }}" />
-        </div>
-    @endif
-
     {{-- Contenido principal --}}
-    <div class="px-2 sm:px-6 lg:px-8">
+    <div class="px-2 ">
         {{-- Tabla de pedidos --}}
+            @php
+                $columns = [
+                    ['key' => 'select', 'label' => '', 'sortable' => false],
+                    ['key' => 'id', 'label' => 'Pedido', 'sortable' => true],
+                    ['key' => 'fecha', 'label' => 'Fecha', 'sortable' => true],
+                    ['key' => 'cliente', 'label' => 'Cliente', 'sortable' => true],
+                    ['key' => 'canal', 'label' => 'Canal', 'sortable' => true],
+                    ['key' => 'total', 'label' => 'Total', 'sortable' => true],
+                    ['key' => 'estado_pago', 'label' => 'Estado del pago', 'sortable' => true],
+                    ['key' => 'estado_preparacion', 'label' => 'Estado de preparación', 'sortable' => true],
+                    ['key' => 'articulos', 'label' => 'Artículos', 'sortable' => true],
+                    ['key' => 'estado_entrega', 'label' => 'Estado de la entrega', 'sortable' => true],
+                    ['key' => 'forma_entrega', 'label' => 'Forma de entrega', 'sortable' => true],
+                    ['key' => 'etiquetas', 'label' => 'Etiquetas', 'sortable' => false],
+                ];
+            @endphp
+
         <x-saved-views-table 
             view-name="pedidos" 
             search-placeholder="Buscar todos los pedidos"
             save-button-text="Guardar vista de tabla"
+            :columns="$columns"
+            :sort-field="$sortField"
+            :sort-direction="$sortDirection"
+            :show-mobile="true"
+            :select-all="$selectAll"
+            :selected="$selected"
         >
             {{-- Tabs predefinidos --}}
             <x-slot name="predefinedTabs">
@@ -129,78 +151,39 @@
                     </flux:menu>
                 </flux:dropdown>
             </x-slot>
-        </x-saved-views-table>
 
-            <table class="w-full bg-white dark:bg-white/5">
-                <thead class="bg-zinc-50 dark:bg-zinc-900 border-x border-zinc-200 dark:border-zinc-700">
-                    <tr>
-                        <th class="w-12 px-4 py-3">
-                            <input type="checkbox" class="rounded border-zinc-300 dark:border-zinc-600">
-                        </th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                            Pedido
-                        </th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                            <button class="flex items-center gap-1 hover:text-zinc-900 dark:hover:text-white">
-                                Fecha
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                        </th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-zinc-700 dark:text-zinc-300">Cliente</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-zinc-700 dark:text-zinc-300">Canal</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-zinc-700 dark:text-zinc-300">Total</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-zinc-700 dark:text-zinc-300">Estado del pago</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-zinc-700 dark:text-zinc-300">Estado de preparación del pedido</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-zinc-700 dark:text-zinc-300">Artículos</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-zinc-700 dark:text-zinc-300">Estado de la entrega</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-zinc-700 dark:text-zinc-300">Forma de entrega</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-zinc-700 dark:text-zinc-300">Etiquetas</th>
-                    </tr>
-                </thead>
-                <tbody class="border-x border-zinc-200 dark:border-zinc-700 divide-y divide-zinc-200 dark:divide-zinc-700">
-                    @forelse($orders as $order)
-                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
-                            {{-- Checkbox --}}
-                            <td class="px-4 py-3">
-                                <input type="checkbox" class="rounded border-zinc-300 dark:border-zinc-600">
-                            </td>
-                            
-                            {{-- Pedido ID --}}
+            {{-- Contenido de la tabla --}}
+            <x-slot name="desktop">
+                @forelse($orders as $order)
+                    <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/50 {{ in_array($order->id, $selected) ? 'bg-lime-50 dark:bg-lime-900/20' : '' }}">
+                        <td class="px-4 py-3">
+                            <flux:checkbox wire:model.live.debounce.150ms="selected" value="{{ $order->id }}" />
+                        </td>
                             <td class="px-4 py-3">
                                 <a href="#" class="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400">
                                     #{{ str_pad($order->id, 4, '0', STR_PAD_LEFT) }}
                                 </a>
                             </td>
-
-                            {{-- Fecha --}}
                             <td class="px-4 py-3">
                                 <div class="text-sm text-zinc-900 dark:text-white">
                                     {{ $order->created_at->isToday() ? 'Hoy a las ' . $order->created_at->format('H:i') : $order->created_at->format('d M, Y H:i') }}
                                 </div>
                             </td>
-
-                            {{-- Cliente --}}
                             <td class="px-4 py-3">
                                 <div class="text-sm text-zinc-900 dark:text-white">
                                     {{ $order->customer->name ?? 'Sin cliente' }}
                                 </div>
                             </td>
-
-                            {{-- Canal --}}
                             <td class="px-4 py-3">
-                                <div class="text-sm text-zinc-500 dark:text-zinc-400">—</div>
+                                <div class="text-sm text-zinc-900 dark:text-white">
+                                    {{ $order->market?->name ?? '—' }}
+                                </div>
                             </td>
-
-                            {{-- Total --}}
                             <td class="px-4 py-3">
                                 <div class="text-sm text-zinc-900 dark:text-white">
                                     {{ number_format($order->total_price, 2) }} L
                                 </div>
                             </td>
-
-                            {{-- Estado del pago --}}
                             <td class="px-4 py-3">
                                 <div class="flex items-center gap-2">
                                     <span class="w-2 h-2 rounded-full 
@@ -215,8 +198,6 @@
                                     </span>
                                 </div>
                             </td>
-
-                            {{-- Estado de preparación --}}
                             <td class="px-4 py-3">
                                 @if($order->statusPreparedOrder)
                                     <div class="inline-flex items-center gap-2 px-2 py-1 
@@ -240,29 +221,21 @@
                                     <span class="text-sm text-zinc-500 dark:text-zinc-400">—</span>
                                 @endif
                             </td>
-
-                            {{-- Artículos --}}
                             <td class="px-4 py-3">
                                 <div class="text-sm text-zinc-900 dark:text-white">
                                     {{ $order->items->count() }} artículo{{ $order->items->count() != 1 ? 's' : '' }}
                                 </div>
                             </td>
-
-                            {{-- Estado de la entrega --}}
                             <td class="px-4 py-3">
                                 <div class="text-sm text-zinc-500 dark:text-zinc-400">
                                     {{ $order->statusOrder?->id === 1 ? 'Entregado' : ($order->statusOrder?->id === 2 ? 'Pendiente' : '—') }}
                                 </div>
                             </td>
-
-                            {{-- Forma de entrega --}}
                             <td class="px-4 py-3">
                                 <div class="text-sm text-zinc-900 dark:text-white">
                                     {{ $order->envio ? 'Envío' : 'Recogida' }}
                                 </div>
                             </td>
-
-                            {{-- Etiquetas --}}
                             <td class="px-4 py-3">
                                 <div class="text-sm text-zinc-500 dark:text-zinc-400">—</div>
                             </td>
@@ -274,16 +247,92 @@
                             </td>
                         </tr>
                     @endforelse
-                </tbody>
-            </table>
+                </x-slot>
 
-            {{-- Paginación --}}
-            @if($orders->hasPages())
-                <div class="bg-white dark:bg-white/5 rounded-b-lg px-4 py-3 border border-zinc-200 dark:border-zinc-700">
-                    {{ $orders->links() }}
-                </div>
-            @endif
+                <x-slot name="footer">
+                    @if($orders->hasPages())
+                        {{ $orders->links() }}
+                    @endif
+                </x-slot>
+            </x-saved-views-table>
         </div>
-    </div>
+        <flux:modal wire:model="showExportModal" name="export-modal" class="min-w-[500px]">
+            <div>
+                <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-700">
+                    <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Exportar pedidos</h2>
+                </div>
+                
+                <div class="px-6 py-4 space-y-6">
+                    {{-- Opciones de exportación --}}
+                    <div>
+                        <flux:radio.group label="Exportar">
+                           
+                            <flux:radio 
+                                wire:model.live="exportOption" 
+                                value="current_page" 
+                                label="Página actual" />
+                            
+                            <flux:radio 
+                                wire:model.live="exportOption" 
+                                value="all" 
+                                label="Todos los pedidos" />
+                        
+                            <flux:radio 
+                                wire:model.live="exportOption" 
+                                value="selected" 
+                                label="Seleccionados: {{ count($selected) }} pedido{{ count($selected) != 1 ? 's' : '' }}"
+                                :disabled="count($selected) === 0"
+                            />
+                            
+                            <flux:radio 
+                                wire:model.live="exportOption" 
+                                value="search" 
+                                label="Pedidos de búsqueda actual"
+                                :disabled="empty($search)"
+                            />
+                            
+                            <flux:radio 
+                                wire:model.live="exportOption" 
+                                value="filtered" 
+                                label="Pedidos de la vista actual (con filtros)"
+                                :disabled="count($activeFilters) === 0 && empty($activeFilter)"
+                            />
+                        </flux:radio.group>
+                    </div>
+                    
+                    {{-- Formato de exportación --}}
+                    <div>
+                        <flux:radio.group label="Exportar como">
+                            <flux:radio 
+                                wire:model.live="exportFormat" 
+                                value="csv" 
+                                label="CSV para Excel, Numbers u otros programas de hojas de cálculo"
+                            />
+                            
+                            <flux:radio 
+                                wire:model.live="exportFormat" 
+                                value="plain_csv" 
+                                label="Archivo CSV sin formato"
+                            />
+                        </flux:radio.group>
+                    </div>
+                </div>
+
+                <div class="px-6 py-4 border-t border-zinc-200 dark:border-zinc-700 flex justify-between items-center">
+                    <flux:button type="button" wire:click="closeExportModal" variant="ghost">
+                        Cancelar
+                    </flux:button>
+                    <flux:button 
+                        icon="arrow-up-tray"
+                        type="button" 
+                        wire:click="exportOrders"
+                        variant="primary"
+                    >
+                        Exportar pedidos
+                    </flux:button>
+                </div>
+            </div>
+        </flux:modal>
+    </div> 
 </div>
                           

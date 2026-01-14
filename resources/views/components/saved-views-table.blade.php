@@ -2,11 +2,17 @@
     'viewName' => 'tabla',
     'searchPlaceholder' => 'Buscar...',
     'saveButtonText' => 'Guardar vista de tabla',
+    'columns' => [],
+    'sortField' => '',
+    'sortDirection' => 'asc',
+    'showMobile' => false,
+    'selectAll' => false,
+    'selected' => [],
 ])
 
-<div class="bg-white dark:bg-zinc-800 rounded-t-lg border border-zinc-200 dark:border-zinc-700 overflow-hidden">
+<div class="bg-white dark:bg-zinc-800 rounded-t-lg rounded-b-lg border border-zinc-200 dark:border-zinc-700 overflow-hidden">
     {{-- Fila con filtros / búsqueda --}}
-    <div>
+    <div class="border border-zinc-200 dark:border-zinc-700">
         @if($this->showSearchBar)
             {{-- Barra de búsqueda expandida --}}
             <div class="px-4 py-3">
@@ -25,9 +31,15 @@
                     </flux:button>
                     <flux:button 
                         wire:click="openSaveTabModal"
-                        :disabled="count($this->activeFilters) === 0"
+                        :disabled="(method_exists($this, 'getActiveViewId') && $this->getActiveViewId()) 
+                            ? (method_exists($this, 'hasUnsavedChanges') && !$this->hasUnsavedChanges())
+                            : (count($this->activeFilters) === 0)"
                     >
-                        {{ $saveButtonText }}
+                        @if(method_exists($this, 'getActiveViewId') && $this->getActiveViewId())
+                            Guardar
+                        @else
+                            {{ $saveButtonText }}
+                        @endif
                     </flux:button>
                 </div>
                 
@@ -109,11 +121,112 @@
         @endif
     </div>
 
-    {{-- Contenido de la tabla (slot principal) --}}
-    {{ $slot }}
+    {{-- Tabla integrada --}}
+    <div class="overflow-x-auto">
+        <table class="min-w-full border-x border-zinc-200 dark:border-zinc-700 divide-y divide-zinc-200 dark:divide-zinc-700">
+            <thead class="bg-zinc-50 dark:bg-zinc-900">
+                @if(count($selected) > 0)
+                    {{-- Barra de acciones cuando hay elementos seleccionados --}}
+                    <tr class="h-[52px]">
+                        <th colspan="{{ count($columns) }}" class="px-4">
+                            <div class="flex items-center justify-between h-[52px]">
+                                <div class="flex items-center gap-4">
+                                    <flux:checkbox wire:model.live="selectAll"  />
+                                    <span class="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                                        {{ count($selected) }} seleccionado{{ count($selected) != 1 ? 's' : '' }}
+                                    </span>
+                                    
+                                    <div class="flex items-center gap-2">
+                                        <flux:button size="xs" wire:click="printDeliveryNotes">
+                                            Imprimir
+                                        </flux:button>
+                                        
+                                        <flux:dropdown>
+                                            <flux:button icon:trailing="chevron-down" size="xs">
+                                                Marcar como
+                                            </flux:button>
+                                            
+                                            <flux:menu class="min-w-40">
+                                                <flux:menu.item wire:click="markAsStatus('no_preparado')">
+                                                    No preparado
+                                                </flux:menu.item>
+                                                <flux:menu.item wire:click="markAsStatus('en_preparacion')">
+                                                    En preparación
+                                                </flux:menu.item>
+                                                <flux:menu.item wire:click="markAsStatus('preparado')">
+                                                    Preparado
+                                                </flux:menu.item>
+                                                <flux:menu.item wire:click="markAsStatus('en_espera')">
+                                                    En espera
+                                                </flux:menu.item>
+                                            </flux:menu>
+                                        </flux:dropdown>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center gap-2">
+                                    <label class="flex items-center gap-2 text-xs text-zinc-700 dark:text-zinc-300 cursor-pointer">
+                                        <flux:switch wire:model.live="showOnlySelected" />
+                                        <span>Mostrar sólo seleccionados</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+                @else
+                    {{-- Encabezados normales de la tabla --}}
+                <tr class="h-[52px]">
+                    @foreach ($columns as $index => $column)
+                        <th scope="col"
+                            class="px-4 text-left text-xs font-medium text-zinc-700 dark:text-zinc-300 {{ isset($column['sortable']) && $column['sortable'] ? 'cursor-pointer group' : '' }}"
+                            @if(isset($column['sortable']) && $column['sortable'])
+                                wire:click="{{ $column['sortBy'] ?? 'sortBy(\''.$column['key'].'\')' }}"
+                            @endif
+                        >
+                            <div class="flex items-center">
+                                @if($column['key'] === 'select')
+                                    <flux:checkbox wire:model.live="selectAll" />
+                                @else
+                                    {{ $column['label'] }}
+                                    @if(isset($column['sortable']) && $column['sortable'])
+                                        @if($sortField === $column['key'])
+                                            {{-- Mostrar flecha activa según dirección --}}
+                                            @if($sortDirection === 'asc')
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-3 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+                                                </svg>
+                                            @else
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-3 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
+                                                </svg>
+                                            @endif
+                                        @else
+                                            {{-- Mostrar flecha en hover para columnas sortables --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
+                                        @endif
+                                    @endif
+                                @endif
+                            </div>
+                        </th>
+                    @endforeach
+                </tr>
+                @endif
+            </thead>
+            <tbody class="divide-y divide-zinc-200 bg-white dark:bg-zinc-800 dark:divide-zinc-700">
+                {{ $desktop ?? $slot }}
+            </tbody>
+        </table>
+    </div>
+
+    {{-- Footer con paginación --}}
+    <div class="bg-white dark:bg-white/5 rounded-b-lg px-4 py-3 border border-zinc-200 dark:border-zinc-700">
+        {{ $footer ?? '' }}
+    </div>
     
     {{-- Modal para guardar vista personalizada --}}
-    <flux:modal wire:model="showSaveTabModal" class="min-w-[400px]" variant="flyout">
+    <flux:modal wire:model="showSaveTabModal" class="min-w-[400px]">
         <div>
             <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-700">
                 <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Guardar vista</h2>
@@ -147,7 +260,7 @@
     </flux:modal>
     
     {{-- Modal para renombrar vista --}}
-    <flux:modal wire:model="showRenameTabModal" class="min-w-[400px]" variant="flyout">
+    <flux:modal wire:model="showRenameTabModal" class="min-w-[400px]">
         <div>
             <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-700">
                 <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Cambiar nombre de vista</h2>

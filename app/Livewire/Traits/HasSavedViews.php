@@ -68,6 +68,11 @@ trait HasSavedViews
     public function setFilter($filter)
     {
         $this->activeFilter = $filter;
+        // Limpiar filtros personalizados al cambiar a filtros predefinidos
+        if (!str_starts_with($filter, 'custom_')) {
+            $this->activeFilters = [];
+            $this->showSearchBar = false;
+        }
         $this->resetPage();
     }
 
@@ -108,8 +113,15 @@ trait HasSavedViews
      */
     public function openSaveTabModal()
     {
-        $this->showSaveTabModal = true;
-        $this->newTabName = '';
+        // Si estamos en una vista guardada, actualizar directamente
+        $activeViewId = $this->getActiveViewId();
+        if ($activeViewId && isset($this->savedTabs[$activeViewId])) {
+            $this->updateCurrentView();
+        } else {
+            // Si no, abrir modal para crear nueva vista
+            $this->showSaveTabModal = true;
+            $this->newTabName = '';
+        }
     }
 
     /**
@@ -130,7 +142,7 @@ trait HasSavedViews
             return;
         }
         
-        UserSavedView::create([
+        $savedView = UserSavedView::create([
             'user_id' => auth()->id(),
             'view_type' => $this->getViewType(),
             'name' => $this->newTabName,
@@ -140,7 +152,35 @@ trait HasSavedViews
         
         $this->loadSavedViews();
         $this->closeSaveTabModal();
-        $this->showSearchBar = false;
+        
+        // Activar la vista recién guardada
+        $this->loadTab($savedView->id);
+    }
+
+    /**
+     * Actualizar vista existente
+     */
+    public function updateCurrentView()
+    {
+        $activeViewId = $this->getActiveViewId();
+        
+        if (!$activeViewId) {
+            return;
+        }
+        
+        $view = UserSavedView::where('id', $activeViewId)
+            ->where('user_id', auth()->id())
+            ->first();
+            
+        if ($view) {
+            $view->update([
+                'filters' => $this->activeFilters,
+                'search' => $this->search
+            ]);
+            
+            $this->loadSavedViews();
+            $this->loadTab($activeViewId);
+        }
     }
 
     /**
@@ -156,6 +196,34 @@ trait HasSavedViews
             $this->showSearchBar = false;
             $this->resetPage();
         }
+    }
+
+    /**
+     * Obtener el ID de la vista activa si es custom
+     */
+    public function getActiveViewId()
+    {
+        if (str_starts_with($this->activeFilter, 'custom_')) {
+            return (int) str_replace('custom_', '', $this->activeFilter);
+        }
+        return null;
+    }
+
+    /**
+     * Verificar si hay cambios en los filtros respecto a la vista guardada
+     */
+    public function hasUnsavedChanges()
+    {
+        $activeViewId = $this->getActiveViewId();
+        
+        if (!$activeViewId || !isset($this->savedTabs[$activeViewId])) {
+            return false;
+        }
+        
+        $savedFilters = $this->savedTabs[$activeViewId]['filters'] ?? [];
+        
+        // Comparar los filtros actuales con los guardados
+        return json_encode($this->activeFilters) !== json_encode($savedFilters);
     }
 
     /**
