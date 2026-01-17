@@ -47,7 +47,7 @@
                                 <flux:label>Método</flux:label>
                                 <div class="flex items-center gap-2 mt-2">
                                     @if($activeTab === 'codigo')
-                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-5 h-5 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                                         </svg>
                                         <span class="text-sm text-zinc-900 dark:text-white">Código de descuento</span>
@@ -223,7 +223,212 @@
                         </div>
                     </div>
 
-                   
+                    {{-- Elegibilidad --}}
+                    <div class="bg-white dark:bg-white/5 rounded-lg shadow-sm p-6">
+                        <h3 class="text-base font-semibold text-zinc-900 dark:text-white mb-4">
+                            Elegibilidad de cliente
+                        </h3>
+
+                        <div class="space-y-3">
+                            <label class="flex items-start cursor-pointer">
+                                <input 
+                                    type="radio" 
+                                    wire:model.live="id_elegibility_discount" 
+                                    value="1"
+                                    class="w-4 h-4 text-lime-600 bg-zinc-100 border-zinc-300 focus:ring-lime-500 dark:focus:ring-lime-600 dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600 mt-0.5"
+                                >
+                                <span class="ms-3 text-sm text-zinc-900 dark:text-zinc-300">Todos los clientes</span>
+                            </label>
+
+                            <label class="flex items-start cursor-pointer">
+                                <input 
+                                    type="radio" 
+                                    wire:model.live="id_elegibility_discount" 
+                                    value="2"
+                                    class="w-4 h-4 text-lime-600 bg-zinc-100 border-zinc-300 focus:ring-lime-500 dark:focus:ring-lime-600 dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600 mt-0.5"
+                                >
+                                <span class="ms-3 text-sm text-zinc-900 dark:text-zinc-300">Segmentos de clientes específicos</span>
+                            </label>
+
+                            @if($id_elegibility_discount == 2)
+                                <div class="ml-7 mt-2">
+                                    <div class="flex gap-2">
+                                        <flux:input 
+                                            wire:click="openSegmentModal"
+                                            placeholder="Buscar segmentos de clientes"
+                                            class="flex-1 cursor-pointer"
+                                            readonly
+                                        />
+                                        <flux:button type="button" wire:click="openSegmentModal">
+                                            Explorar
+                                        </flux:button>
+                                    </div>
+
+                                    {{-- Lista de segmentos seleccionados --}}
+                                    @if(count($selected_segments ?? []) > 0)
+                                        <div class="mt-3 border border-zinc-200 dark:border-zinc-700 rounded-lg divide-y divide-zinc-200 dark:divide-zinc-700">
+                                            @foreach($selected_segments as $key => $segment)
+                                                <div class="p-3 flex items-center justify-between">
+                                                    <div class="flex items-center gap-3">
+                                                        <div class="w-8 h-8 bg-zinc-100 dark:bg-zinc-700 rounded flex items-center justify-center flex-shrink-0">
+                                                            <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                            </svg>
+                                                        </div>
+                                                        <div class="text-sm font-medium text-zinc-900 dark:text-white">{{ $segment['name'] }}</div>
+                                                    </div>
+                                                    <button 
+                                                        type="button"
+                                                        wire:click="removeSegment('{{ $key }}')"
+                                                        class="text-zinc-400 hover:text-red-600"
+                                                    >
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
+
+                            <label class="flex items-start cursor-pointer">
+                                <input 
+                                    type="radio" 
+                                    wire:model.live="id_elegibility_discount" 
+                                    value="3"
+                                    class="w-4 h-4 text-lime-600 bg-zinc-100 border-zinc-300 focus:ring-lime-500 dark:focus:ring-lime-600 dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600 mt-0.5"
+                                >
+                                <span class="ms-3 text-sm text-zinc-900 dark:text-zinc-300">Clientes específicos</span>
+                            </label>
+
+                            @if($id_elegibility_discount == 3)
+                                <div class="ml-7 mt-2">
+                                    <div class="flex gap-2">
+                                        <flux:input 
+                                            wire:click="openCustomerModal"
+                                            placeholder="Buscar clientes"
+                                            class="flex-1 cursor-pointer"
+                                            readonly
+                                        />
+                                        <flux:button type="button" wire:click="openCustomerModal">
+                                            Explorar
+                                        </flux:button>
+                                    </div>
+
+                                    {{-- Lista de clientes seleccionados --}}
+                                    @if(count($selected_customers ?? []) > 0)
+                                        <div class="mt-3 border border-zinc-200 dark:border-zinc-700 rounded-lg divide-y divide-zinc-200 dark:divide-zinc-700">
+                                            @foreach($selected_customers as $key => $customer)
+                                                <div class="p-3 flex items-center justify-between">
+                                                    <div class="flex items-center gap-3">
+                                                        <div class="w-8 h-8 bg-zinc-100 dark:bg-zinc-700 rounded flex items-center justify-center flex-shrink-0">
+                                                            <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                            </svg>
+                                                        </div>
+                                                        <div>
+                                                            <div class="text-sm font-medium text-zinc-900 dark:text-white">{{ $customer['name'] }}</div>
+                                                            @if(isset($customer['email']))
+                                                                <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $customer['email'] }}</div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    <button 
+                                                        type="button"
+                                                        wire:click="removeCustomer('{{ $key }}')"
+                                                        class="text-zinc-400 hover:text-red-600"
+                                                    >
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Requisitos mínimos de compra --}}
+                    <div class="bg-white dark:bg-white/5 rounded-lg shadow-sm p-6">
+                        <h3 class="text-base font-semibold text-zinc-900 dark:text-white mb-4">
+                            Requisitos mínimos de compra
+                        </h3>
+
+                        <div class="space-y-3">
+                            <label class="flex items-start cursor-pointer">
+                                <input 
+                                    type="radio" 
+                                    wire:model.live="id_requirement_discount" 
+                                    value="1"
+                                    class="w-4 h-4 text-lime-600 bg-zinc-100 border-zinc-300 focus:ring-lime-500 dark:focus:ring-lime-600 dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600 mt-0.5"
+                                >
+                                <span class="ms-3 text-sm text-zinc-900 dark:text-zinc-300">Sin requisitos mínimos</span>
+                            </label>
+
+                            <label class="flex items-start cursor-pointer">
+                                <input 
+                                    type="radio" 
+                                    wire:model.live="id_requirement_discount" 
+                                    value="2"
+                                    class="w-4 h-4 text-lime-600 bg-zinc-100 border-zinc-300 focus:ring-lime-500 dark:focus:ring-lime-600 dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600 mt-0.5"
+                                >
+                                <span class="ms-3 text-sm text-zinc-900 dark:text-zinc-300">Cantidad mínima de artículos</span>
+                            </label>
+
+                            @if($id_requirement_discount == 2)
+                                <div class="ml-7 mt-2">
+                                    <flux:label class="text-xs">Cantidad mínima</flux:label>
+                                    <flux:input 
+                                        wire:model="minimum_quantity"
+                                        type="number"
+                                        min="1"
+                                        placeholder="Ejemplo: 5"
+                                        class="mt-1"
+                                    />
+                                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                                        Se aplica solo a productos elegibles.
+                                    </p>
+                                </div>
+                            @endif
+
+                            <label class="flex items-start cursor-pointer">
+                                <input 
+                                    type="radio" 
+                                    wire:model.live="id_requirement_discount" 
+                                    value="3"
+                                    class="w-4 h-4 text-lime-600 bg-zinc-100 border-zinc-300 focus:ring-lime-500 dark:focus:ring-lime-600 dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600 mt-0.5"
+                                >
+                                <span class="ms-3 text-sm text-zinc-900 dark:text-zinc-300">Monto mínimo de compra (L)</span>
+                            </label>
+
+                            @if($id_requirement_discount == 3)
+                                <div class="ml-7 mt-2">
+                                    <flux:label class="text-xs">Monto mínimo</flux:label>
+                                    <div class="relative mt-1">
+                                        <flux:input 
+                                            wire:model="minimum_purchase_amount"
+                                            type="number"
+                                            step="0.01"
+                                            min="0"
+                                            placeholder="0.00"
+                                            class="pr-10"
+                                        />
+                                        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                                            L
+                                        </span>
+                                    </div>
+                                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                                        Se aplica solo a productos elegibles.
+                                    </p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
 
                     {{-- Usos máximos --}}
                     <div class="bg-white dark:bg-white/5 rounded-lg shadow-sm p-6">
@@ -279,7 +484,7 @@
                                     <span class="ms-3 text-sm text-zinc-900 dark:text-zinc-300">Descuentos de producto</span>
                                 </label>
                                 @if($combine_with_product)
-                                    <p class="ml-6 mt-2 text-xs text-zinc-600 dark:text-zinc-400 bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+                                    <p class="ml-6 mt-2 text-xs text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-900/20 p-3 rounded-lg">
                                         Cada artículo apto del carrito puede recibir como máximo un descuento de producto.
                                     </p>
                                 @endif
@@ -292,7 +497,7 @@
                                     <span class="ms-3 text-sm text-zinc-900 dark:text-zinc-300">Descuentos de pedido</span>
                                 </label>
                                 @if($combine_with_order)
-                                    <p class="ml-6 mt-2 text-xs text-zinc-600 dark:text-zinc-400 bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+                                    <p class="ml-6 mt-2 text-xs text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-900/20 p-3 rounded-lg">
                                         Todos los descuentos de pedido aptos aplicarán además de los descuentos de producto aptos.
                                     </p>
                                 @endif
@@ -305,7 +510,7 @@
                                     <span class="ms-3 text-sm text-zinc-900 dark:text-zinc-300">Descuentos de envío</span>
                                 </label>
                                 @if($combine_with_shipping)
-                                    <p class="ml-6 mt-2 text-xs text-zinc-600 dark:text-zinc-400 bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+                                    <p class="ml-6 mt-2 text-xs text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-900/20 p-3 rounded-lg">
                                         El descuento de envío apto de mayor importe se aplicará además de los descuentos de producto aptos.
                                     </p>
                                 @endif
@@ -613,16 +818,16 @@
                                     @forelse($collections as $collection)
                                         <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
                                             <td class="px-4 py-3">
-    <label class="relative inline-flex items-center cursor-pointer">
-        <input 
-            type="checkbox" 
-            class="sr-only peer"
-            onclick="$wire.toggleCollectionSelection({{ $collection->id }}, '{{ addslashes($collection->name) }}')"
-            {{ isset($tempSelectedCollections['collection_' . $collection->id]) ? 'checked' : '' }}
-        >
-        <div class="w-11 h-6 bg-zinc-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-lime-300 dark:peer-focus:ring-lime-800 rounded-full peer dark:bg-zinc-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-lime-600"></div>
-    </label>
-</td>
+                                                <label class="relative inline-flex items-center cursor-pointer">
+                                                    <input 
+                                                        type="checkbox" 
+                                                        class="sr-only peer"
+                                                        onclick="$wire.toggleCollectionSelection({{ $collection->id }}, '{{ addslashes($collection->name) }}')"
+                                                        {{ isset($tempSelectedCollections['collection_' . $collection->id]) ? 'checked' : '' }}
+                                                    >
+                                                    <div class="w-11 h-6 bg-zinc-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-lime-300 dark:peer-focus:ring-lime-800 rounded-full peer dark:bg-zinc-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-zinc-600 peer-checked:bg-lime-600"></div>
+                                                </label>
+                                            </td>
                                             <td class="px-4 py-3">
                                                 <div class="flex items-center gap-3">
                                                     <div class="w-10 h-10 bg-zinc-100 dark:bg-zinc-700 rounded flex items-center justify-center">
@@ -663,4 +868,151 @@
             </div>
         </div>
     </flux:modal>
-</div>
+    
+    {{-- Modal de búsqueda de segmentos --}}
+    <flux:modal name="segment-modal" class="min-w-[800px] space-y-6">
+        <div class="flex items-center justify-between">
+            <flux:heading size="lg">Seleccionar segmentos de clientes</flux:heading>
+        </div>
+
+        <div class="space-y-4">
+            <flux:input wire:model.live.debounce.300ms="searchSegments" placeholder="Buscar segmentos..." />
+            
+            <div class="border border-zinc-200 dark:border-zinc-700 rounded-lg overflow-hidden max-h-[500px] overflow-y-auto">
+                <table class="w-full">
+                    <thead class="bg-zinc-50 dark:bg-zinc-900 sticky top-0">
+                        <tr>
+                            <th class="w-12 px-4 py-3"></th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-zinc-700 dark:text-zinc-300">Segmento</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-zinc-700 dark:text-zinc-300">Clientes</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white dark:bg-white/5 divide-y divide-zinc-200 dark:divide-zinc-700">
+                        @forelse($segments as $segment)
+                            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+                                <td class="px-4 py-3 text-center">
+                                    <button 
+                                        type="button"
+                                        wire:click="toggleSegmentSelection({{ $segment->id }}, '{{ addslashes($segment->name) }}')"
+                                        class="inline-flex items-center justify-center w-8 h-8 rounded-full transition-colors {{ isset($selected_segments['segment_' . $segment->id]) ? 'bg-lime-600 text-white' : 'bg-zinc-200 text-zinc-400 dark:bg-zinc-700' }}"
+                                    >
+                                        @if(isset($selected_segments['segment_' . $segment->id]))
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                        @else
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                        @endif
+                                    </button>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 bg-zinc-100 dark:bg-zinc-700 rounded flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                            </svg>
+                                        </div>
+                                        <div class="text-sm font-medium text-zinc-900 dark:text-white">{{ $segment->name }}</div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-right">
+                                    <span class="text-sm text-zinc-900 dark:text-white">{{ $segment->customers_count ?? 0 }}</span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="px-4 py-12 text-center text-zinc-500 dark:text-zinc-400">
+                                    <svg class="mx-auto h-12 w-12 text-zinc-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                    <p class="text-sm">No se encontraron segmentos</p>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-4 border-t border-zinc-200 dark:border-zinc-700">
+            <span class="text-sm text-zinc-600 dark:text-zinc-400">
+                {{ count($selected_segments) }} segmento(s) seleccionado(s)
+            </span>
+            <div class="flex gap-3">
+                <flux:button variant="ghost" wire:click="closeSegmentModal">Cancelar</flux:button>
+                <flux:button wire:click="closeSegmentModal" :disabled="count($selected_segments) === 0">Agregar</flux:button>
+            </div>
+        </div>
+    </flux:modal>
+    
+    {{-- Modal de búsqueda de clientes --}}
+    <flux:modal name="customer-modal" class="min-w-[800px] space-y-6">
+        <div class="flex items-center justify-between">
+            <flux:heading size="lg">Seleccionar clientes</flux:heading>
+        </div>
+
+        <div class="space-y-4">
+            <flux:input wire:model.live.debounce.300ms="searchCustomers" placeholder="Buscar clientes..." />
+            
+            <div class="border border-zinc-200 dark:border-zinc-700 rounded-lg overflow-hidden max-h-[500px] overflow-y-auto">
+                <table class="w-full">
+                    <thead class="bg-zinc-50 dark:bg-zinc-900 sticky top-0">
+                        <tr>
+                            <th class="w-12 px-4 py-3"></th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-zinc-700 dark:text-zinc-300">Cliente</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-zinc-700 dark:text-zinc-300">Email</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white dark:bg-white/5 divide-y divide-zinc-200 dark:divide-zinc-700">
+                        @forelse($customers as $customer)
+                            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+                                <td class="px-4 py-3 text-center">
+                                    <button 
+                                        type="button"
+                                        wire:click="toggleCustomerSelection({{ $customer->id }}, '{{ addslashes($customer->name) }}', '{{ addslashes($customer->email ?? '') }}')"
+                                        class="inline-flex items-center justify-center w-8 h-8 rounded-full transition-colors {{ isset($selected_customers['customer_' . $customer->id]) ? 'bg-lime-600 text-white' : 'bg-zinc-200 text-zinc-400 dark:bg-zinc-700' }}"
+                                    >
+                                        @if(isset($selected_customers['customer_' . $customer->id]))
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                        @else
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                        @endif
+                                    </button>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 bg-zinc-100 dark:bg-zinc-700 rounded flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                            </svg>
+                                        </div>
+                                        <div class="text-sm font-medium text-zinc-900 dark:text-white">{{ $customer->name }}</div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-right">
+                                    <span class="text-sm text-zinc-900 dark:text-white">{{ $customer->email ?? 'Sin email' }}</span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="px-4 py-12 text-center text-zinc-500 dark:text-zinc-400">
+                                    <svg class="mx-auto h-12 w-12 text-zinc-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                    <p class="text-sm">No se encontraron clientes</p>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-4 border-t border-zinc-200 dark:border-zinc-700">
+            <span class="text-sm text-zinc-600 dark:text-zinc-400">
+                {{ count($selected_customers) }} cliente(s) seleccionado(s)
+            </span>
+            <div class="flex gap-3">
+                <flux:button variant="ghost" wire:click="closeCustomerModal">Cancelar</flux:button>
+                <flux:button wire:click="closeCustomerModal" :disabled="count($selected_customers) === 0">Agregar</flux:button>
+            </div>
+        </div>
+    </flux:modal>

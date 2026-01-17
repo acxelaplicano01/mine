@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             
             // Clientes
             CustomerSeeder::class,
+            SegmentSeeder::class,
             
             // Productos
             ProductSeeder::class,

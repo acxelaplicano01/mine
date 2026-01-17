@@ -13,6 +13,7 @@ use App\Models\Discount\StatusDiscount;
 use App\Models\Market\Markets;
 use App\Models\Product\Products;
 use App\Models\Customer\Customers;
+use App\Models\Customer\Segments;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 
@@ -56,7 +57,7 @@ class CreateDiscount extends Component
     
     // Requisitos
     public $id_requirement_discount = 1;
-    public $amount = null;
+    public $minimum_purchase_amount = null;
     public $minimum_quantity = null;
     
     // Usos máximos
@@ -112,7 +113,7 @@ class CreateDiscount extends Component
         $this->id_method_discount = $discount->id_method_discount;
         $this->id_elegibility_discount = $discount->id_elegibility_discount;
         $this->id_requirement_discount = $discount->id_requirement_discount;
-        $this->amount = $discount->amount;
+        $this->minimum_purchase_amount = $discount->minimum_purchase_amount;
         $this->minimum_quantity = $discount->minimum_quantity;
         $this->number_usage_max = $discount->number_usage_max;
         $this->fecha_inicio_uso = $discount->fecha_inicio_uso ? $discount->fecha_inicio_uso->format('Y-m-d') : null;
@@ -142,6 +143,19 @@ class CreateDiscount extends Component
             $this->selected_collections = is_array($discount->selected_collections) 
                 ? $discount->selected_collections 
                 : json_decode($discount->selected_collections, true) ?? [];
+        }
+        
+        // Cargar clientes y segmentos seleccionados
+        if ($discount->selected_customers) {
+            $this->selected_customers = is_array($discount->selected_customers) 
+                ? $discount->selected_customers 
+                : json_decode($discount->selected_customers, true) ?? [];
+        }
+        
+        if ($discount->selected_segments) {
+            $this->selected_segments = is_array($discount->selected_segments) 
+                ? $discount->selected_segments 
+                : json_decode($discount->selected_segments, true) ?? [];
         }
     }
 
@@ -308,6 +322,73 @@ class CreateDiscount extends Component
         unset($this->selected_collections[$key]);
         $this->selected_collections = $this->selected_collections; // Forzar actualización
     }
+    
+    // Métodos para manejar segmentos
+    public function openSegmentModal()
+    {
+        $this->searchSegments = '';
+        $this->modal('segment-modal')->show();
+    }
+    
+    public function closeSegmentModal()
+    {
+        $this->modal('segment-modal')->close();
+    }
+    
+    public function toggleSegmentSelection($segmentId, $segmentName)
+    {
+        $key = 'segment_' . $segmentId;
+        
+        if (isset($this->selected_segments[$key])) {
+            unset($this->selected_segments[$key]);
+        } else {
+            $this->selected_segments[$key] = [
+                'id' => $segmentId,
+                'name' => $segmentName,
+                'type' => 'segment'
+            ];
+        }
+    }
+    
+    public function removeSegment($key)
+    {
+        unset($this->selected_segments[$key]);
+        $this->selected_segments = $this->selected_segments;
+    }
+    
+    // Métodos para manejar clientes
+    public function openCustomerModal()
+    {
+        $this->searchCustomers = '';
+        $this->modal('customer-modal')->show();
+    }
+    
+    public function closeCustomerModal()
+    {
+        $this->modal('customer-modal')->close();
+    }
+    
+    public function toggleCustomerSelection($customerId, $customerName, $customerEmail = null)
+    {
+        $key = 'customer_' . $customerId;
+        
+        if (isset($this->selected_customers[$key])) {
+            unset($this->selected_customers[$key]);
+        } else {
+            $this->selected_customers[$key] = [
+                'id' => $customerId,
+                'name' => $customerName,
+                'email' => $customerEmail,
+                'type' => 'customer'
+            ];
+        }
+    }
+    
+    public function removeCustomer($key)
+    {
+        unset($this->selected_customers[$key]);
+        $this->selected_customers = $this->selected_customers;
+    }
 
     public function save()
     {
@@ -333,8 +414,9 @@ class CreateDiscount extends Component
             'id_method_discount' => $this->id_method_discount,
             'id_elegibility_discount' => $this->id_elegibility_discount,
             'id_requirement_discount' => $this->id_requirement_discount,
-            'amount' => $this->id_requirement_discount == 3 ? $this->amount : null,
+            'amount' => $this->id_requirement_discount == 3 ? $this->minimum_purchase_amount : null,
             'minimum_quantity' => $this->id_requirement_discount == 2 ? $this->minimum_quantity : null,
+            'minimum_purchase_amount' => $this->id_requirement_discount == 3 ? $this->minimum_purchase_amount : null,
             'usage_limit' => $this->limit_usage ? $this->number_usage_max : null,
             'number_usage_max' => $this->limit_usage ? $this->number_usage_max : null,
             'usage_per_customer' => $this->limit_per_customer ? 1 : null,
@@ -350,6 +432,8 @@ class CreateDiscount extends Component
             'id_status_discount' => $this->id_status_discount,
             'selected_products' => json_encode($this->selected_products),
             'selected_collections' => json_encode($this->selected_collections),
+            'selected_customers' => json_encode($this->selected_customers),
+            'selected_segments' => json_encode($this->selected_segments),
             'applies_to' => $this->applies_to,
         ];
 
@@ -392,6 +476,40 @@ class CreateDiscount extends Component
             })
             ->limit(50)
             ->get();
+            
+        $customers = Customers::query()
+            ->when($this->searchCustomers, function($query) {
+                $query->where(function($q) {
+                    $q->where('name', 'like', '%' . $this->searchCustomers . '%')
+                      ->orWhere('email', 'like', '%' . $this->searchCustomers . '%');
+                });
+            })
+            ->limit(50)
+            ->get();
+            
+        // Obtener segmentos únicos con el conteo de clientes
+        $segments = \DB::table('customer_segments')
+            ->select('id', 'name', 'description', \DB::raw('COUNT(id_customer) as customers_count'))
+            ->when($this->searchSegments, function($query) {
+                $query->where('name', 'like', '%' . $this->searchSegments . '%');
+            })
+            ->whereNull('deleted_at')
+            ->groupBy('name', 'description', 'id')
+            ->orderBy('name')
+            ->limit(50)
+            ->get()
+            ->unique('name')
+            ->map(function($segment) {
+                // Para cada segmento único, recalcular el conteo total
+                $totalCustomers = \DB::table('customer_segments')
+                    ->where('name', $segment->name)
+                    ->whereNotNull('id_customer')
+                    ->whereNull('deleted_at')
+                    ->count();
+                
+                $segment->customers_count = $totalCustomers;
+                return $segment;
+            });
 
         return view('livewire.discount.create-discount', [
             'typeDiscounts' => $typeDiscounts,
@@ -402,6 +520,8 @@ class CreateDiscount extends Component
             'markets' => $markets,
             'products' => $products,
             'collections' => $collections,
+            'customers' => $customers,
+            'segments' => $segments,
         ]);
     }
 }

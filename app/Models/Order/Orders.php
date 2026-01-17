@@ -9,6 +9,7 @@ use App\Models\Product\Products;
 use App\Models\Customer\Customers;
 use App\Models\Envio\Envios;
 use App\Models\Market\Markets;
+use App\Services\CustomerSegmentService;
 
 class Orders extends Model
 {
@@ -74,5 +75,27 @@ class Orders extends Model
     public function market()
     {
         return $this->belongsTo(Markets::class, 'id_market');
+    }
+
+    /**
+     * Boot method para registrar eventos del modelo
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Actualizar segmentos automáticos cuando se crea una orden
+        static::created(function ($order) {
+            if ($order->id_customer) {
+                CustomerSegmentService::updateCustomerSegments($order->id_customer);
+            }
+        });
+
+        // Actualizar segmentos automáticos cuando se elimina una orden
+        static::deleted(function ($order) {
+            if ($order->id_customer) {
+                CustomerSegmentService::updateCustomerSegments($order->id_customer);
+            }
+        });
     }
 }

@@ -24,8 +24,8 @@ class DiscountSeeder extends Seeder
                 'id_colection' => null,
                 'id_product' => 1,
                 'una_vez_por_pedido' => false,
-                'id_elegibility_discount' => 1, // Todos los clientes
-                'id_requirement_discount' => 1, // Sin requisitos mínimos
+                'id_elegibility_discount' => 1,
+                'id_requirement_discount' => 1,
                 'number_usage_max' => 100,
                 'usage_per_customer' => 1,
                 'fecha_inicio_uso' => now(),
@@ -51,8 +51,8 @@ class DiscountSeeder extends Seeder
                 'id_colection' => null,
                 'id_product' => 2,
                 'una_vez_por_pedido' => false,
-                'id_elegibility_discount' => 1, // Todos los clientes
-                'id_requirement_discount' => 1, // Sin requisitos mínimos
+                'id_elegibility_discount' => 1,
+                'id_requirement_discount' => 1,
                 'number_usage_max' => null,
                 'usage_per_customer' => null,
                 'fecha_inicio_uso' => now(),
@@ -78,8 +78,8 @@ class DiscountSeeder extends Seeder
                 'id_colection' => null,
                 'id_product' => 1,
                 'una_vez_por_pedido' => false,
-                'id_elegibility_discount' => 1, // Todos los clientes
-                'id_requirement_discount' => 3, // Monto mínimo de compra
+                'id_elegibility_discount' => 1,
+                'id_requirement_discount' => 3,
                 'number_usage_max' => null,
                 'usage_per_customer' => null,
                 'fecha_inicio_uso' => now(),
@@ -105,8 +105,8 @@ class DiscountSeeder extends Seeder
                 'id_colection' => null,
                 'id_product' => 2,
                 'una_vez_por_pedido' => false,
-                'id_elegibility_discount' => 1, // Todos los clientes
-                'id_requirement_discount' => 1, // Sin requisitos mínimos
+                'id_elegibility_discount' => 1,
+                'id_requirement_discount' => 1,
                 'number_usage_max' => null,
                 'usage_per_customer' => null,
                 'fecha_inicio_uso' => now(),

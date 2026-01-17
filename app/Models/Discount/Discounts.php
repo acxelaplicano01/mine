@@ -61,4 +61,14 @@ class Discounts extends Model
     {
         return $this->belongsTo(StatusDiscount::class, 'id_status_discount');
     }
+
+    public function elegibilityDiscount()
+    {
+        return $this->belongsTo(ElegibilityDiscount::class, 'id_elegibility_discount');
+    }
+
+    public function requirementDiscount()
+    {
+        return $this->belongsTo(RequirementDiscount::class, 'id_requirement_discount');
+    }
 }

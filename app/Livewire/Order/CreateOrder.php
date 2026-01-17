@@ -833,34 +833,9 @@ class CreateOrder extends Component
             ->where('id_status_discount', 1) // Solo activos
             // Filtrar por método automático (id_method_discount = 2)
             ->where('id_method_discount', 2)
-            // Filtrar por elegibilidad
-            ->where(function($query) {
-                // Todos los clientes o cliente específico
-                $query->where('id_elegibility_discount', 1) // Todos los clientes
-                      ->orWhere(function($q) {
-                          // Aquí se puede agregar lógica para clientes específicos
-                          $q->where('id_elegibility_discount', 2)
-                            ->where('id_customer', $this->id_customer);
-                      });
-            })
-            // Filtrar por requisitos mínimos de compra
-            ->where(function($query) {
-                $query->where('id_requirement_discount', 1) // Sin requisitos mínimos
-                      ->orWhere(function($q) {
-                          // Requisito de monto mínimo
-                          $q->where('id_requirement_discount', 3)
-                            ->where('amount', '<=', $this->subtotal_price);
-                      })
-                      ->orWhere(function($q) {
-                          // Requisito de cantidad mínima de productos
-                          $q->where('id_requirement_discount', 2)
-                            ->where('amount', '<=', array_sum(array_column($this->selectedProducts, 'quantity')));
-                      });
-            })
             // Filtrar por fechas de validez
             ->where(function($query) {
-
-            $query->whereNull('fecha_inicio_uso')
+                $query->whereNull('fecha_inicio_uso')
                       ->orWhere('fecha_inicio_uso', '<=', now());
             })
             ->where(function($query) {
@@ -868,6 +843,72 @@ class CreateOrder extends Component
                       ->orWhere('fecha_fin_uso', '>=', now());
             })
             ->get();
+
+        // Filtrar manualmente por elegibilidad (requiere decodificar JSON)
+        $discounts = $discounts->filter(function($discount) {
+            // Elegibilidad 1: Todos los clientes
+            if ($discount->id_elegibility_discount == 1) {
+                return true;
+            }
+            
+            // Elegibilidad 2: Segmentos de clientes específicos
+            if ($discount->id_elegibility_discount == 2 && $this->id_customer) {
+                $selectedSegments = is_string($discount->selected_segments) 
+                    ? json_decode($discount->selected_segments, true) 
+                    : $discount->selected_segments;
+                
+                if (!empty($selectedSegments)) {
+                    $discountSegmentIds = array_column($selectedSegments, 'id');
+                    
+                    // Verificar si el cliente pertenece a alguno de los segmentos del descuento
+                    $customerInSegment = \DB::table('customer_segments')
+                        ->whereIn('id', $discountSegmentIds)
+                        ->where('id_customer', $this->id_customer)
+                        ->exists();
+                    
+                    if ($customerInSegment) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            
+            // Elegibilidad 3: Clientes específicos
+            if ($discount->id_elegibility_discount == 3 && $this->id_customer) {
+                $selectedCustomers = is_string($discount->selected_customers) 
+                    ? json_decode($discount->selected_customers, true) 
+                    : $discount->selected_customers;
+                
+                if (!empty($selectedCustomers)) {
+                    $discountCustomerIds = array_column($selectedCustomers, 'id');
+                    return in_array($this->id_customer, $discountCustomerIds);
+                }
+                return false;
+            }
+            
+            return false;
+        });
+
+        // Filtrar por requisitos mínimos de compra
+        $discounts = $discounts->filter(function($discount) {
+            // Requisito 1: Sin requisitos mínimos
+            if ($discount->id_requirement_discount == 1) {
+                return true;
+            }
+            
+            // Requisito 2: Cantidad mínima de productos
+            if ($discount->id_requirement_discount == 2) {
+                $totalQuantity = array_sum(array_column($this->selectedProducts, 'quantity'));
+                return $discount->minimum_quantity && $totalQuantity >= $discount->minimum_quantity;
+            }
+            
+            // Requisito 3: Monto mínimo de compra
+            if ($discount->id_requirement_discount == 3) {
+                return $discount->minimum_purchase_amount && $this->subtotal_price >= $discount->minimum_purchase_amount;
+            }
+            
+            return false;
+        });
 
         // Filtrar descuentos que apliquen a los productos o colecciones del pedido
         $validDiscounts = [];
