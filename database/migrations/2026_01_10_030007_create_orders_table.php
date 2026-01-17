@@ -21,6 +21,9 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('id_moneda')->nullable();
             $table->text('note')->nullable();
             $table->unsignedBigInteger('id_etiqueta')->nullable();
+            $table->unsignedBigInteger('id_condiciones_pago')->nullable();
+            $table->date('fecha_emision')->nullable();
+            $table->date('fecha_vencimiento')->nullable();
             $table->unsignedBigInteger('id_status_prepared_order')->nullable();
             $table->unsignedBigInteger('id_status_order')->nullable();
             $table->timestamps();

@@ -10,7 +10,8 @@
         <div class="px-2 sm:px-4 lg:px-2">
             <div class="flex items-center justify-between mb-4">
                 <div>
-                   
+                    <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">Pedidos</h1>
+                    <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-1">Administra los pedidos de tu tienda</p>
                 </div>
                 <div class="flex items-center gap-3">
                     <flux:button variant="filled" size="sm" wire:click="openExportModal" icon="arrow-up-tray">
@@ -26,7 +27,7 @@
                             <flux:menu.item>Archivar</flux:menu.item>
                         </flux:menu>
                     </flux:dropdown>
-                    <flux:button href="{{ route('orders_create') }}" variant="primary" size="sm">
+                    <flux:button href="{{ route('orders_create') }}" icon="plus" variant="primary" size="sm">
                         Crear pedido
                     </flux:button>
                 </div>
@@ -148,6 +149,41 @@
                                 </div>
                             </div>
                         </div>
+                    </flux:menu>
+                </flux:dropdown>
+            </x-slot>
+
+            {{-- Acciones masivas para pedidos --}}
+            <x-slot name="bulkActions">
+                <flux:dropdown>
+                    <flux:button icon:trailing="chevron-down" size="xs">
+                        Imprimir
+                    </flux:button>
+                    <flux:menu class="min-w-40">
+                        <flux:menu.item wire:click="printDeliveryNotes">
+                            Imprimir notas de entrega
+                        </flux:menu.item>
+                    </flux:menu>
+                </flux:dropdown>
+                
+                <flux:dropdown>
+                    <flux:button icon:trailing="chevron-down" size="xs">
+                        Marcar como
+                    </flux:button>
+                    
+                    <flux:menu class="min-w-40">
+                        <flux:menu.item wire:click="markAsStatus('no_preparado')">
+                            No preparado
+                        </flux:menu.item>
+                        <flux:menu.item wire:click="markAsStatus('en_preparacion')">
+                            En preparación
+                        </flux:menu.item>
+                        <flux:menu.item wire:click="markAsStatus('preparado')">
+                            Preparado
+                        </flux:menu.item>
+                        <flux:menu.item wire:click="markAsStatus('en_espera')">
+                            En espera
+                        </flux:menu.item>
                     </flux:menu>
                 </flux:dropdown>
             </x-slot>
@@ -333,6 +369,15 @@
                 </div>
             </div>
         </flux:modal>
-    </div> 
+    </div>
+    
+    {{-- Script para abrir ventana de impresión --}}
+    <script>
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('openPrintWindow', (event) => {
+                window.open(event.url, '_blank', 'width=800,height=600');
+            });
+        });
+    </script>
 </div>
                           

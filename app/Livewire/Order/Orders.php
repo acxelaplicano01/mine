@@ -345,9 +345,9 @@ class Orders extends Component
             return;
         }
         
-        // Aquí implementarás la lógica de impresión
-        // Por ahora solo mostrar mensaje
-        session()->flash('message', 'Imprimiendo ' . count($this->selected) . ' nota(s) de entrega...');
+        // Redirigir a una nueva ventana con la vista de impresión
+        $ids = implode(',', $this->selected);
+        $this->dispatch('openPrintWindow', url: route('orders.print', ['ids' => $ids]));
     }
 
     /**

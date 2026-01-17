@@ -1,5 +1,6 @@
 <?php
 
+use Rk\RoutingKit\Contracts\RkEntityInterface;
 use Rk\RoutingKit\Entities\RkNavigation;
 
 return [
@@ -158,33 +159,32 @@ return [
                 ->setEndBlock('automations'),
         ])
         ->setEndBlock('marketing_group'),
-
+      
         RkNavigation::make('discounts')
-            ->setParentId('discounts_group')
             ->setLabel('Descuentos')
             ->setDescription('Gestión de Descuentos')
             ->setHeroIcon('percent-badge')
             ->setItems([])
             ->setEndBlock('discounts'),
 
-         RkNavigation::makeGroup('markets_group')
-        ->setLabel('Mercados')
-        ->setDescription('Gestión de Mercados y Catálogos')
-        ->setHeroIcon('globe-alt')
-        ->setItems([
-            RkNavigation::make('markets')
-                ->setLabel('Mercados')
-                ->setDescription('Gestión de Mercados')
-                ->setHeroIcon('globe-alt')
-                ->setItems([])
-                ->setEndBlock('markets'),
+        RkNavigation::makeGroup('markets_group')
+            ->setLabel('Mercados')
+            ->setDescription('Gestión de Mercados y Catálogos')
+            ->setHeroIcon('globe-alt')
+            ->setItems([
+                RkNavigation::make('markets')
+                    ->setLabel('Mercados')
+                    ->setDescription('Gestión de Mercados')
+                    ->setHeroIcon('globe-alt')
+                    ->setItems([])
+                    ->setEndBlock('markets'),
 
-            RkNavigation::make('catalogs')
-                ->setLabel('Catálogos')
-                ->setDescription('Gestión de Catálogos')
-                ->setHeroIcon('book-open')
-                ->setItems([])
-                ->setEndBlock('catalogs'),
+                RkNavigation::make('catalogs')
+                    ->setLabel('Catálogos')
+                    ->setDescription('Gestión de Catálogos')
+                    ->setHeroIcon('book-open')
+                    ->setItems([])
+                    ->setEndBlock('catalogs'),
         ])
         ->setEndBlock('markets_group'),
 

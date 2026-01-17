@@ -11,5 +11,8 @@ class ConditionPay extends Model
     protected $fillable = [
         'nombre_condicion',
         'descripcion_condicion',
+        'dias_vencimiento',
+        'type',
+        'is_active',
     ];
 }

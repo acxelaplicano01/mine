@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\PointSale;
+namespace App\Models\PointSale\Employee;
 
 use Illuminate\Database\Eloquent\Model;
 

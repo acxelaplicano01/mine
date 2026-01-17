@@ -1,11 +1,12 @@
 <?php
 
+use Rk\RoutingKit\Contracts\RkEntityInterface;
 use Rk\RoutingKit\Entities\RkRoute;
 
 return [
 
     RkRoute::makeGroup('grupo_auth')
-        ->setUrlMiddleware(['auth'])
+        ->setUrlMiddleware(['auth', 'verified'])
         ->setItems([
             RkRoute::make('usercontroller_D0Q')
                 ->setParentId('grupo_auth')
@@ -164,15 +165,33 @@ return [
                 ->setRoles(['admin_general'])
                 ->setItems([])
                 ->setEndBlock('automations'),
-
+    
             RkRoute::make('discounts')
                 ->setAccessPermission('acceder-discounts')
                 ->setUrlMethod('get')
                 ->setUrlController('App\Livewire\Discount\Discounts')
                 ->setRoles(['admin_general'])
-                ->setItems([])
+                ->setItems([])            
                 ->setEndBlock('discounts'),
 
+            RkRoute::make('discounts_create')
+                ->setAccessPermission('acceder-discounts-create')
+                ->setUrl('/discounts/create')
+                ->setUrlMethod('get')
+                ->setUrlController('App\Livewire\Discount\CreateDiscount')
+                ->setRoles(['admin_general'])
+                ->setItems([])
+                ->setEndBlock('discounts_create'),
+
+            RkRoute::make('discounts_edit')
+                ->setAccessPermission('acceder-discounts-edit')
+                ->setUrl('/discounts/{id}/edit')
+                ->setUrlMethod('get')
+                ->setUrlController('App\Livewire\Discount\CreateDiscount')
+                ->setRoles(['admin_general'])
+                ->setItems([])
+                ->setEndBlock('discounts_edit'),
+           
             RkRoute::make('markets')
                 ->setAccessPermission('acceder-markets')
                 ->setUrlMethod('get')

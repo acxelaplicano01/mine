@@ -122,7 +122,7 @@
     <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
         <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-        <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
+        <a href="{{ route('usercontroller_D0Q') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
             <x-rk.flux::components.app-logo />
         </a>
 
@@ -182,7 +182,7 @@
 
                     <x-rk.flux::components.simple-node :node="$configNode" />
                 </flux:menu.radio.group>
-                <flux:menu.item :href="route('profile.show')" icon="user-circle" wire:navigate>{{ __('Profile') }}</flux:menu.item>
+                <flux:menu.item :href="route('login')" icon="user-circle" wire:navigate>{{ __('Profile') }}</flux:menu.item>
                 <flux:menu.separator />
 
                 <form method="POST" action="{{ route('logout') }}" class="w-full">

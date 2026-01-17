@@ -71,6 +71,8 @@ class OrderSeeder extends Seeder
                 'total_price' => $total,
                 'note' => rand(0, 1) ? null : 'Nota del pedido ' . ($i + 1),
                 'id_status_order' => rand(1, 3),
+                'id_status_prepared_order' => rand(1, 2),
+                'id_condiciones_pago' => rand(1, 4),
                 'created_at' => now()->subDays(rand(1, 30)),
                 'updated_at' => now()->subDays(rand(1, 30)),
             ]);

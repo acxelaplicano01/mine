@@ -21,12 +21,45 @@ class DatabaseSeeder extends Seeder
 
         // Ejecutar seeders en orden
         $this->call([
+            // Monedas y países
             MonedaSeeder::class,
+            PaisSeeder::class,
+            IdiomaSeeder::class,
+            
+            // Markets
             MarketSeeder::class,
+            
+            // Clientes
             CustomerSeeder::class,
+            
+            // Productos
             ProductSeeder::class,
-            OrderSeeder::class,
             VariantProductSeeder::class,
+            
+            // Descuentos
+            TypeDiscountSeeder::class,
+            MethodDiscountSeeder::class,
+            ElegibilityDiscountSeeder::class,
+            RequirementDiscountSeeder::class,
+            StatusDiscountSeeder::class,
+            DiscountSeeder::class,
+            
+            // Estados de órdenes
+            StatusOrderSeeder::class,
+            StatusPreparedOrderSeeder::class,
+            ConditionPaySeeder::class,
+            
+            // Impuestos
+            ImpuestoSeeder::class,
+            
+            // Estados de entidades
+            StatusDistribuidorSeeder::class,
+            StatusBranchSeeder::class,
+            StatusEmployeeSeeder::class,
+            StatusTransportistaSeeder::class,
+            
+            // Órdenes
+            OrderSeeder::class,
         ]);
     }
 }

@@ -136,31 +136,9 @@
                                         {{ count($selected) }} seleccionado{{ count($selected) != 1 ? 's' : '' }}
                                     </span>
                                     
+                                    {{-- Acciones masivas dinámicas (slot) --}}
                                     <div class="flex items-center gap-2">
-                                        <flux:button size="xs" wire:click="printDeliveryNotes">
-                                            Imprimir
-                                        </flux:button>
-                                        
-                                        <flux:dropdown>
-                                            <flux:button icon:trailing="chevron-down" size="xs">
-                                                Marcar como
-                                            </flux:button>
-                                            
-                                            <flux:menu class="min-w-40">
-                                                <flux:menu.item wire:click="markAsStatus('no_preparado')">
-                                                    No preparado
-                                                </flux:menu.item>
-                                                <flux:menu.item wire:click="markAsStatus('en_preparacion')">
-                                                    En preparación
-                                                </flux:menu.item>
-                                                <flux:menu.item wire:click="markAsStatus('preparado')">
-                                                    Preparado
-                                                </flux:menu.item>
-                                                <flux:menu.item wire:click="markAsStatus('en_espera')">
-                                                    En espera
-                                                </flux:menu.item>
-                                            </flux:menu>
-                                        </flux:dropdown>
+                                        {{ $bulkActions ?? '' }}
                                     </div>
                                 </div>
                                 

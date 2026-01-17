@@ -11,7 +11,6 @@ class Paises extends Model
     protected $fillable = [
         'nombre',
         'codigo_iso2',
-        'codigo_iso3',
         'codigo_numerico',
         'prefijo_telefono',
         'id_moneda',
