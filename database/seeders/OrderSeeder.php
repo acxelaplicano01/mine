@@ -43,9 +43,9 @@ class OrderSeeder extends Seeder
                 $variant = null;
                 if ($product->variants->isNotEmpty() && rand(0, 1)) {
                     $variant = $product->variants->random();
-                    $price = $variant->price;
+                    $price = $variant->price ?? $product->price_unitario ?? 0;
                 } else {
-                    $price = $product->price;
+                    $price = $product->price_unitario ?? 0;
                 }
                 
                 $itemSubtotal = $price * $quantity;

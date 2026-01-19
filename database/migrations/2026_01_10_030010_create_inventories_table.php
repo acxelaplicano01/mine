@@ -12,6 +12,7 @@ class CreateInventoriesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('id_product')->nullable();
             $table->integer('cantidad_inventario')->default(0);
+            $table->integer('cantidad_no_disponible')->default(0);
             $table->boolean('seguimiento_inventario')->default(false);
             $table->string('location')->nullable();
             $table->unsignedBigInteger('id_status_inventory')->nullable();

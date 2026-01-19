@@ -9,7 +9,7 @@
 
         @if (session()->has('error'))
             <div class="px-4 sm:px-6 lg:px-8 py-4">
-                <flux:callout dismissible variant="danger" icon="exclamation-circle" heading="{{ session('error') }}" />
+                <flux:callout dismissible variant="danger" icon="x-circle" heading="{{ session('error') }}" />
             </div>
         @endif
 

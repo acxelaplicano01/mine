@@ -2,6 +2,7 @@
 
 namespace App\Models\Product;
 
+use App\Models\Product\Inventory\Inventories;
 use Illuminate\Database\Eloquent\Model;
 
 class Products extends Model
@@ -12,6 +13,8 @@ class Products extends Model
         'name',
         'description',
         'multimedia',
+        'sku',
+        'barcode',
         'id_category',
         'price_comparacion',
         'price_unitario',
@@ -45,6 +48,16 @@ class Products extends Model
     public function variants()
     {
         return $this->hasMany(VariantProduct::class, 'product_id');
+    }
+
+    public function inventory()
+    {
+        return $this->belongsTo(Inventories::class, 'id_inventory');
+    }
+
+    public function inventoryMovements()
+    {
+        return $this->hasMany(\App\Models\Product\Inventory\InventoryMovements::class, 'id_product');
     }
 
 }

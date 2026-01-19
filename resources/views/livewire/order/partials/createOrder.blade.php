@@ -711,7 +711,7 @@
                     <div class="flex-shrink-0 mb-4">
                         <div class="flex gap-2 mb-3">
                             <div class="flex-1">
-                                <flux:input wire:model.live.debounce.300ms="searchProduct" icon="magnifying-glass"
+                                <flux:input wire:model.live.debounce.300ms="searchProduct" autofocus icon="magnifying-glass"
                                     placeholder="Buscar productos" class="w-full" />
                             </div>
                             <div class="w-48">

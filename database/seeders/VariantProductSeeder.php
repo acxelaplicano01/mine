@@ -50,12 +50,17 @@ class VariantProductSeeder extends Seeder
             // Determinar qué tipo de variante agregar según el índice
             $variantType = $index % 3;
             
+            // SKU base del producto
+            $baseSku = $product->sku ?? 'PROD-' . $product->id;
+            $counter = 1;
+            
             if ($variantType === 0) {
                 // Agregar variantes de color
                 foreach ($colores as $color) {
+                    $variantSku = $baseSku . '-' . strtoupper(substr($color['nombre'], 0, 3)) . '-' . str_pad($counter, 2, '0', STR_PAD_LEFT);
                     VariantProduct::create([
                         'product_id' => $product->id,
-                        'sku' => 'VAR-' . strtoupper(substr($color['nombre'], 0, 3)) . '-' . rand(1000, 9999),
+                        'sku' => $variantSku,
                         'barcode' => '789' . rand(1000000000, 9999999999),
                         'price' => $color['precio'],
                         'cantidad_inventario' => rand(10, 150),
@@ -63,13 +68,15 @@ class VariantProductSeeder extends Seeder
                         'name_variant' => 'Color',
                         'valores_variante' => json_encode(['color' => $color['nombre']]),
                     ]);
+                    $counter++;
                 }
             } elseif ($variantType === 1) {
                 // Agregar variantes de talla
                 foreach ($tallas as $talla) {
+                    $variantSku = $baseSku . '-' . $talla['nombre'] . '-' . str_pad($counter, 2, '0', STR_PAD_LEFT);
                     VariantProduct::create([
                         'product_id' => $product->id,
-                        'sku' => 'VAR-' . $talla['nombre'] . '-' . rand(1000, 9999),
+                        'sku' => $variantSku,
                         'barcode' => '789' . rand(1000000000, 9999999999),
                         'price' => $talla['precio'],
                         'cantidad_inventario' => rand(15, 100),
@@ -77,13 +84,15 @@ class VariantProductSeeder extends Seeder
                         'name_variant' => 'Talla',
                         'valores_variante' => json_encode(['talla' => $talla['nombre']]),
                     ]);
+                    $counter++;
                 }
             } else {
                 // Agregar variantes de estilo
                 foreach ($estilos as $estilo) {
+                    $variantSku = $baseSku . '-' . strtoupper(substr($estilo['nombre'], 0, 3)) . '-' . str_pad($counter, 2, '0', STR_PAD_LEFT);
                     VariantProduct::create([
                         'product_id' => $product->id,
-                        'sku' => 'VAR-' . strtoupper(substr($estilo['nombre'], 0, 3)) . '-' . rand(1000, 9999),
+                        'sku' => $variantSku,
                         'barcode' => '789' . rand(1000000000, 9999999999),
                         'price' => $estilo['precio'],
                         'cantidad_inventario' => rand(20, 120),
@@ -91,6 +100,7 @@ class VariantProductSeeder extends Seeder
                         'name_variant' => 'Estilo',
                         'valores_variante' => json_encode(['estilo' => $estilo['nombre']]),
                     ]);
+                    $counter++;
                 }
             }
         }

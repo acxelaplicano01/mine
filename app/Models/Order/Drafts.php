@@ -7,24 +7,25 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\User;
 use App\Models\Customer\Customers;
+use App\Models\Market\Markets;
+use App\Models\Envio\Envios;
 
 class Drafts extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'drafts';
+
     protected $fillable = [
         'user_id',
         'id_customer',
-        'subtotal_price',
         'total_price',
+        'subtotal_price',
         'id_market',
         'id_discount',
         'id_envio',
         'id_impuesto',
         'id_moneda',
-        'id_condiciones_pago',
-        'fecha_emision',
-        'fecha_vencimiento',
         'note',
         'id_etiqueta',
         'id_status_prepared_order',
@@ -36,6 +37,7 @@ class Drafts extends Model
         'subtotal_price' => 'decimal:2',
     ];
 
+    // Relaciones
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -49,5 +51,25 @@ class Drafts extends Model
     public function customer()
     {
         return $this->belongsTo(Customers::class, 'id_customer');
+    }
+
+    public function statusOrder()
+    {
+        return $this->belongsTo(StatusOrder::class, 'id_status_order');
+    }
+
+    public function statusPreparedOrder()
+    {
+        return $this->belongsTo(StatusPreparedOrder::class, 'id_status_prepared_order');
+    }
+
+    public function envio()
+    {
+        return $this->belongsTo(Envios::class, 'id_envio');
+    }
+
+    public function market()
+    {
+        return $this->belongsTo(Markets::class, 'id_market');
     }
 }

@@ -1,28 +1,28 @@
 @php
-    $footerQuery = rk_navigation()
-        ->newQuery()
-        ->loadContexts(['rk_footer'])
-        ->filterForCurrentUser();
+$footerQuery = rk_navigation()
+    ->newQuery()
+    ->loadContexts(['rk_footer'])
+    ->filterForCurrentUser();
 
-    $footerItems = $footerQuery->get();
+$footerItems = $footerQuery->get();
 
 
 
-    $configNode = $footerQuery->getSubBranch('settings_group')->first();
+$configNode = $footerQuery->getSubBranch('settings_group')->first();
 
-    $headerQuery = rk_navigation()
-        ->newQuery()
-        ->loadContexts(['dashboard_navigators'])
-        ->filterForCurrentUser();
+$headerQuery = rk_navigation()
+    ->newQuery()
+    ->loadContexts(['dashboard_navigators'])
+    ->filterForCurrentUser();
 
-    $headerItems = $headerQuery->get();
+$headerItems = $headerQuery->get();
 
-    $fullQuery = rk_navigation()
-        ->newQuery()
-        ->loadContexts(['dashboard_navigators', 'rk_footer'])
-        ->filterForCurrentUser();
+$fullQuery = rk_navigation()
+    ->newQuery()
+    ->loadContexts(['dashboard_navigators', 'rk_footer'])
+    ->filterForCurrentUser();
 
-    $activeNode = $fullQuery->getActiveNodeParentWithChildren();
+$activeNode = $fullQuery->getActiveNodeParentWithChildren();
 @endphp
 
 <!DOCTYPE html>
@@ -189,7 +189,9 @@
 
             <flux:sidebar.collapse class="in-data-flux-sidebar-on-desktop:not-in-data-flux-sidebar-collapsed-desktop:-mr-2" />
         </flux:sidebar.header>
-
+        {{--<flux:callout icon="rocket-launch" color="lime" inline>
+            <flux:callout.heading>Activar modo PRO</flux:callout.heading>
+        </flux:callout>--}}
         <flux:sidebar.nav>
             @foreach ($headerItems as $item)
                 @if ($item->getItems()->isNotEmpty())

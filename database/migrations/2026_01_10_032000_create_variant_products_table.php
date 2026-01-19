@@ -15,6 +15,7 @@ class CreateVariantProductsTable extends Migration
             $table->string('barcode')->nullable();
             $table->decimal('price', 16, 4)->nullable();
             $table->integer('cantidad_inventario')->default(0);
+            $table->integer('cantidad_no_disponible')->default(0);
             $table->decimal('weight', 16, 4)->nullable();
             $table->string('name_variant')->nullable();
             $table->json('valores_variante')->nullable();

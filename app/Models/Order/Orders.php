@@ -89,12 +89,40 @@ class Orders extends Model
             if ($order->id_customer) {
                 CustomerSegmentService::updateCustomerSegments($order->id_customer);
             }
+
+            // Reducir inventario automáticamente
+            foreach ($order->items as $item) {
+                try {
+                    \App\Services\InventoryService::reduceStock(
+                        $item->product_id,
+                        $item->quantity,
+                        $item->variant_id,
+                        $order->id
+                    );
+                } catch (\Exception $e) {
+                    \Log::error('Error al reducir inventario: ' . $e->getMessage());
+                }
+            }
         });
 
         // Actualizar segmentos automáticos cuando se elimina una orden
         static::deleted(function ($order) {
             if ($order->id_customer) {
                 CustomerSegmentService::updateCustomerSegments($order->id_customer);
+            }
+
+            // Devolver inventario al eliminar pedido
+            foreach ($order->items as $item) {
+                try {
+                    \App\Services\InventoryService::returnStock(
+                        $item->product_id,
+                        $item->quantity,
+                        $item->variant_id,
+                        $order->id
+                    );
+                } catch (\Exception $e) {
+                    \Log::error('Error al devolver inventario: ' . $e->getMessage());
+                }
             }
         });
     }
