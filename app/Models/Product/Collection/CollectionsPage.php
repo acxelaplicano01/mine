@@ -3,6 +3,7 @@
 namespace App\Models\Product\Collection;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Product\Products;
 
 class CollectionsPage extends Model
 {
@@ -17,6 +18,8 @@ class CollectionsPage extends Model
         //'id_plantilla',
         'image_url',
         'id_status_collection',
+        'conditions',
+        'condition_match',
     ];
 
     protected $hidden = [
@@ -30,5 +33,26 @@ class CollectionsPage extends Model
         'description' => 'string',
         'image_url' => 'string',
         'id_status_collection' => 'string',
+        'conditions' => 'array',
+        'condition_match' => 'string',
     ];
+
+    /**
+     * Relación muchos a muchos con productos
+     */
+    public function products()
+    {
+        return $this->belongsToMany(Products::class, 'collection_products', 'collection_id', 'product_id')
+            ->withPivot('variant_id', 'sort_order')
+            ->withTimestamps()
+            ->orderBy('collection_products.sort_order');
+    }
+
+    /**
+     * Relación con la tabla intermedia
+     */
+    public function collectionProducts()
+    {
+        return $this->hasMany(CollectionProduct::class, 'collection_id');
+    }
 }

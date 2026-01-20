@@ -61,6 +61,15 @@ return [
                 ->setItems([])
                 ->setEndBlock('collections'),
 
+            RkRoute::make('create-collection')
+                ->setAccessPermission('acceder-create-collection')
+                ->setUrl('/collection/create')
+                ->setUrlMethod('get')
+                ->setUrlController('App\Livewire\Product\CreateCollection')
+                ->setRoles(['admin_general'])
+                ->setItems([])
+                ->setEndBlock('create-collection'),
+
             RkRoute::make('orders')
                 ->setAccessPermission('acceder-orders')
                 ->setUrl('/orders')

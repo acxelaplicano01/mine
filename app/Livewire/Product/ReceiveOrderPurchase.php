@@ -92,6 +92,6 @@ class ReceiveOrderPurchase extends Component
 
     public function render()
     {
-        return view('livewire.product.receive-order-purchase');
+        return view('livewire.producto.order-purchase.receive-order-purchase');
     }
 }

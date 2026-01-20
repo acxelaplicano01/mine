@@ -68,7 +68,14 @@ return [
                 ->setLabel('Colecciones')
                 ->setDescription('Gestión de Colecciones')
                 ->setHeroIcon('rectangle-stack')
-                ->setItems([])
+                ->setItems([
+                    RkNavigation::make('create-collection')
+                        ->setLabel('Crear Colección')
+                        ->setDescription('Crear una nueva colección de productos')
+                        ->setHeroIcon('plus-circle')
+                        ->setItems([])
+                        ->setEndBlock('create-collection'),
+                ])
                 ->setEndBlock('collections'),
 
             RkNavigation::make('inventories')
