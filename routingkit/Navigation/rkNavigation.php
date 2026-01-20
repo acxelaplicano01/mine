@@ -82,14 +82,27 @@ return [
                 ->setLabel('Órdenes y Compras')
                 ->setDescription('Gestión de Órdenes y Compras')
                 ->setHeroIcon('shopping-cart')
-                ->setItems([])
+                ->setItems([
+                    RkNavigation::make('orders_purchases_create')
+                        ->setLabel('Crear Orden de Compra')
+                        ->setDescription('Crear una nueva orden de compra')
+                        ->setHeroIcon('plus-circle')
+                        ->setItems([])
+                        ->setEndBlock('orders_purchases_create'),
+                ])
                 ->setEndBlock('orders_purchases'),
                 
             RkNavigation::make('transfers')
                 ->setLabel('Reubicación')
                 ->setDescription('Gestión de Reubicación de Productos')
                 ->setHeroIcon('arrows-right-left')
-                ->setItems([])
+                ->setItems([
+                    RkNavigation::make('transfers_create')
+                        ->setLabel('Crear Reubicación')
+                        ->setDescription('Crear una nueva transferencia de productos')
+                        ->setHeroIcon('plus-circle')
+                        ->setItems([])
+                ])
                 ->setEndBlock('transfers'),
             
             RkNavigation::make('giftscards')

@@ -44,6 +44,15 @@ return [
                 ->setItems([])
                 ->setEndBlock('transfers'),
 
+            RkRoute::make('transfers_create')
+                ->setAccessPermission('acceder-transfers-create')
+                ->setUrl('/transfers/create')
+                ->setUrlMethod('get')
+                ->setUrlController('App\Livewire\Product\CreateTransfer')
+                ->setRoles(['admin_general'])
+                ->setItems([])
+                ->setEndBlock('transfers_create'),
+
             RkRoute::make('collections')
                 ->setAccessPermission('acceder-collections')
                 ->setUrlMethod('get')
@@ -93,6 +102,24 @@ return [
                 ->setRoles(['admin_general'])
                 ->setItems([])
                 ->setEndBlock('orders_purchases'),
+
+            RkRoute::make('orders_purchases_create')
+                ->setAccessPermission('acceder-orders-purchases-create')
+                ->setUrl('/orders-purchases/create')
+                ->setUrlMethod('get')
+                ->setUrlController('App\Livewire\Product\CreateOrderPurchase')
+                ->setRoles(['admin_general'])
+                ->setItems([])
+                ->setEndBlock('orders_purchases_create'),
+
+            RkRoute::make('order_purchases_receive')
+                ->setAccessPermission('acceder-order-purchases-receive')
+                ->setUrl('/orders-purchases/{id}/receive')
+                ->setUrlMethod('get')
+                ->setUrlController('App\Livewire\Product\ReceiveOrderPurchase')
+                ->setRoles(['admin_general'])
+                ->setItems([])
+                ->setEndBlock('order_purchases_receive'),
 
             RkRoute::make('customers')
                 ->setAccessPermission('acceder-customers')
