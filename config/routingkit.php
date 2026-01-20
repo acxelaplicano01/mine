@@ -249,8 +249,8 @@ return [
         'admin_general' => [
             'user' => [
                 'name' => "Administrador",
-                'email' => env('MAIL_ADMIN_ADDRESS') ?? 'admin@example.com',
-                'password' => env('MAIL_ADMIN_PASSWORD') ?? 'password',
+                'email' => env('MAIL_ADMIN_ADDRESS') ?? 'admin@gmail.com',
+                'password' => env('MAIL_ADMIN_PASSWORD') ?? '12345678',
                 'is_central_user' => true
             ],
             'roles'    => ['admin_general'],
