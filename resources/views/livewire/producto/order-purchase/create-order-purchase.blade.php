@@ -35,6 +35,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Distribuidor</label>
                                 <flux:select wire:model="id_distribuidor" placeholder="Seleccionar distribuidor...">
+                                    <flux:select.option value="">Seleccionar distribuidor</flux:select.option>
                                     @foreach($distribuidores as $dist)
                                         <flux:select.option value="{{ $dist->id }}">{{ $dist->name }}</flux:select.option>
                                     @endforeach
@@ -47,6 +48,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Destino</label>
                                 <flux:select wire:model="id_sucursal_destino" placeholder="Seleccionar destino...">
+                                    <flux:select.option value="">Seleccionar sucursal</flux:select.option>
                                     @foreach($branches as $branch)
                                         <flux:select.option value="{{ $branch->id }}">{{ $branch->name }}</flux:select.option>
                                     @endforeach
@@ -67,6 +69,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Condiciones de pago (opcional)</label>
                                 <flux:select wire:model="id_condiciones_pago" placeholder="Ninguna">
+                                    <flux:select.option value="">Ninguna</flux:select.option>
                                     @foreach($condicionesPago as $condicion)
                                         <flux:select.option value="{{ $condicion->id }}">{{ $condicion->nombre_condicion }}</flux:select.option>
                                     @endforeach
@@ -76,6 +79,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Moneda del distribuidor</label>
                                 <flux:select wire:model="id_moneda_del_distribuidor" placeholder="Seleccionar moneda...">
+                                    <flux:select.option value="">Seleccionar moneda</flux:select.option>
                                     @foreach($monedas as $moneda)
                                         <flux:select.option value="{{ $moneda->id }}">{{ $moneda->nombre }} ({{ $moneda->simbolo }})</flux:select.option>
                                     @endforeach
@@ -101,6 +105,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Empresa de transporte</label>
                                 <flux:select wire:model="id_empresa_trasnportista" placeholder="Seleccionar...">
+                                    <flux:select.option value="">Seleccionar empresa</flux:select.option>
                                     @foreach($transportistas as $transportista)
                                         <flux:select.option value="{{ $transportista->id }}">{{ $transportista->name }}</flux:select.option>
                                     @endforeach
@@ -430,7 +435,7 @@
                     <div class="flex-1 border border-zinc-200 dark:border-zinc-700 rounded-lg overflow-hidden">
                         <div class="h-full overflow-y-auto">
                             <table class="w-full">
-                                <thead class="bg-zinc-50 dark:bg-white/5 sticky top-0">
+                                <thead class="bg-zinc-50 dark:bg-zinc-800 sticky top-0">
                                     <tr>
                                         <th class="w-12 px-4 py-3"></th>
                                         <th class="px-4 py-3 text-left text-xs font-medium text-zinc-700 dark:text-zinc-300">Producto</th>
@@ -441,7 +446,7 @@
                                 <tbody class="bg-white dark:bg-white/5 divide-y divide-zinc-200 dark:divide-zinc-700">
                                     @forelse($products as $product)
                                         @if($product->variants && $product->variants->count() > 0)
-                                            <tr class="bg-zinc-50 dark:bg-white/5/50">
+                                            <tr class="bg-zinc-50 dark:bg-zinc-800">
                                                 <td class="px-4 py-3">
                                                     @php
                                                         $allVariantsSelected = true;
@@ -582,6 +587,7 @@
                 <div>
                     <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Tipo de ajuste</label>
                     <flux:select wire:model="adjustmentType" placeholder="Seleccionar tipo...">
+                        <flux:select.option value="">Seleccionar tipo de ajuste</flux:select.option>
                         @foreach($availableAdjustments as $key => $label)
                             <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                         @endforeach
