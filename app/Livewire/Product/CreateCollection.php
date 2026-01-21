@@ -9,6 +9,7 @@ use App\Models\Product\Collection\CollectionsPage;
 use App\Models\Product\Collection\CollectionProduct;
 use App\Models\Product\Products;
 use App\Models\Product\TypeProduct;
+use App\Models\Etiquetas\Etiquetas;
 use App\Models\Distribuidor\Distribuidores;
 use Illuminate\Support\Facades\DB;
 
@@ -40,6 +41,8 @@ class CreateCollection extends Component
     // Datos para los selects de condiciones
     public $tipos = [];
     public $distribuidores = [];
+    public $etiquetas = [];
+    public $categorias = [];
     
     public function mount()
     {
@@ -49,8 +52,10 @@ class CreateCollection extends Component
             ['field' => 'etiqueta', 'operator' => 'igual', 'value' => '']
         ];
         
-        // Cargar datos para los selects (solo distribuidores por ahora)
+        // Cargar datos para los selects
         $this->distribuidores = Distribuidores::all(['id', 'name'])->toArray();
+        $this->tipos = TypeProduct::all(['id', 'name'])->toArray();
+        $this->etiquetas = Etiquetas::all(['id', 'name'])->toArray();
     }
     
     public function addCondition()
@@ -271,6 +276,20 @@ class CreateCollection extends Component
                         'collection_id' => $collection->id,
                         'product_id' => $product['product_id'],
                         'variant_id' => $product['variant_id'],
+                        'sort_order' => $index,
+                    ]);
+                }
+            }
+
+            // Si es inteligente, aplicar las condiciones y agregar productos que cumplan
+            if ($this->id_tipo_collection == 2) {
+                $matchingProducts = $collection->getSmartCollectionProducts();
+                
+                foreach ($matchingProducts as $index => $product) {
+                    CollectionProduct::create([
+                        'collection_id' => $collection->id,
+                        'product_id' => $product->id,
+                        'variant_id' => null,
                         'sort_order' => $index,
                     ]);
                 }

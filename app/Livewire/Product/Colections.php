@@ -21,6 +21,30 @@ class Colections extends Component
         return 'colecciones';
     }
 
+    /**
+     * Aplicar filtro individual a la query
+     */
+    protected function applyFilterToQuery($query, array $filter)
+    {
+        switch ($filter['type']) {
+            case 'activo':
+                $query->where('id_status_collection', 1);
+                break;
+                
+            case 'inactivo':
+                $query->where('id_status_collection', 0);
+                break;
+                
+            case 'manual':
+                $query->where('id_tipo_collection', 1);
+                break;
+                
+            case 'inteligente':
+                $query->where('id_tipo_collection', 2);
+                break;
+        }
+    }
+
     // Propiedades para la tabla
     public $search = '';
     public $perPage = 10;
@@ -59,13 +83,23 @@ class Colections extends Component
 
     public function sortBy($field)
     {
-        if ($this->sortField === $field) {
+        // Mapeo de columnas de visualización a columnas de BD
+        $columnMap = [
+            'nombre' => 'name',
+            'tipo' => 'id_tipo_collection',
+            'estado' => 'id_status_collection',
+        ];
+
+        // Convertir el campo de visualización al campo de BD
+        $dbField = $columnMap[$field] ?? $field;
+
+        if ($this->sortField === $dbField) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
         } else {
             $this->sortDirection = 'asc';
         }
         
-        $this->sortField = $field;
+        $this->sortField = $dbField;
     }
 
     public function updatedSelectAll($value)

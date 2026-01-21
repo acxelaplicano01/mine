@@ -41,7 +41,7 @@
                                 </label>
                                 <flux:select wire:model="id_sucursal_origen" placeholder="Seleccionar origen...">
                                     @foreach($branches as $branch)
-                                        <flux.select.option value="{{ $branch->id }}">{{ $branch->name }}</flux.select.option>
+                                        <flux:select.option value="{{ $branch->id }}">{{ $branch->name }}</flux:select.option>
                                     @endforeach
                                 </flux:select>
                                 @if($id_sucursal_origen)
@@ -64,7 +64,7 @@
                                 </label>
                                 <flux:select wire:model="id_sucursal_destino" placeholder="Seleccionar destino...">
                                     @foreach($branches as $branch)
-                                        <flux.select.option value="{{ $branch->id }}">{{ $branch->name }}</flux.select.option>
+                                        <flux:select.option value="{{ $branch->id }}">{{ $branch->name }}</flux:select.option>
                                     @endforeach
                                 </flux:select>
                                 @if($id_sucursal_destino)

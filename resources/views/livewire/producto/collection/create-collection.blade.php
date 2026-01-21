@@ -114,13 +114,15 @@
                                         {{-- Campo --}}
                                         <div class="flex-1">
                                             <flux:select wire:model.live="conditions.{{ $index }}.field">
-                                                <flux:select.option value="etiqueta">Etiqueta</flux:select.option>
                                                 <flux:select.option value="titulo">Título del producto</flux:select.option>
                                                 <flux:select.option value="tipo">Tipo de producto</flux:select.option>
                                                 <flux:select.option value="proveedor">Proveedor</flux:select.option>
+                                                <flux:select.option value="etiqueta">Etiqueta</flux:select.option>
                                                 <flux:select.option value="precio">Precio</flux:select.option>
-                                                <flux:select.option value="stock">Stock</flux:select.option>
+                                                <flux:select.option value="precio_comparacion">Precio de comparación</flux:select.option>
                                                 <flux:select.option value="peso">Peso</flux:select.option>
+                                                <flux:select.option value="stock">Existencias</flux:select.option>
+                                                <flux:select.option value="titulo_variante">Título de la variante</flux:select.option>
                                             </flux:select>
                                         </div>
 
@@ -149,8 +151,32 @@
                                                             <flux:select.option value="{{ $distribuidor['id'] }}">{{ $distribuidor['name'] ?? 'Sin nombre' }}</flux:select.option>
                                                         @endforeach
                                                     </flux:select>
+                                                @elseif($condition['field'] === 'tipo')
+                                                    {{-- Select para Tipo de Producto --}}
+                                                    <flux:select wire:model="conditions.{{ $index }}.value">
+                                                        <flux:select.option value="">Selecciona un tipo</flux:select.option>
+                                                        @foreach($tipos as $tipo)
+                                                            <flux:select.option value="{{ $tipo['id'] }}">{{ $tipo['name'] ?? 'Sin nombre' }}</flux:select.option>
+                                                        @endforeach
+                                                    </flux:select>
+                                                @elseif($condition['field'] === 'etiqueta')
+                                                    {{-- Select para Etiqueta --}}
+                                                    <flux:select wire:model="conditions.{{ $index }}.value">
+                                                        <flux:select.option value="">Selecciona una etiqueta</flux:select.option>
+                                                        @foreach($etiquetas as $etiqueta)
+                                                            <flux:select.option value="{{ $etiqueta['id'] }}">{{ $etiqueta['name'] ?? 'Sin nombre' }}</flux:select.option>
+                                                        @endforeach
+                                                    </flux:select>
+                                                @elseif($condition['field'] === 'precio' || $condition['field'] === 'precio_comparacion' || $condition['field'] === 'peso' || $condition['field'] === 'stock')
+                                                    {{-- Input numérico --}}
+                                                    <flux:input 
+                                                        wire:model="conditions.{{ $index }}.value"
+                                                        type="number"
+                                                        step="0.01"
+                                                        placeholder="Ingresa un valor"
+                                                    />
                                                 @else
-                                                    {{-- Input por defecto --}}
+                                                    {{-- Input de texto por defecto --}}
                                                     <flux:input 
                                                         wire:model="conditions.{{ $index }}.value"
                                                         placeholder="Ingresa un valor"

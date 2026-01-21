@@ -22,26 +22,6 @@
                     <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-1">Organiza tus productos en colecciones</p>
                 </div>
                 <div class="flex items-center gap-3">
-                    <flux:button variant="filled" size="sm" wire:click="openExportModal" icon="arrow-up-tray">
-                        Exportar
-                    </flux:button>
-                    <flux:dropdown>
-                        <flux:button variant="filled" size="sm" icon-trailing="chevron-down">
-                            Más acciones
-                        </flux:button>
-                        <flux:menu>
-                            <flux:menu.item wire:click="confirmDelete" :disabled="count($selected) === 0">
-                                Eliminar seleccionadas
-                            </flux:menu.item>
-                            <flux:menu.separator />
-                            <flux:menu.item wire:click="changeStatus(1)" :disabled="count($selected) === 0">
-                                Marcar como activa
-                            </flux:menu.item>
-                            <flux:menu.item wire:click="changeStatus(0)" :disabled="count($selected) === 0">
-                                Marcar como inactiva
-                            </flux:menu.item>
-                        </flux:menu>
-                    </flux:dropdown>
                     <flux:button href="{{ route('create-collection') }}" icon="plus" variant="primary" size="sm">
                         Crear colección
                     </flux:button>

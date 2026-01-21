@@ -1272,13 +1272,23 @@ class Inventories extends Component
         // Aplicar filtros
         $query = $this->applyFilterToQuery($query);
 
-        // Ordenamiento
-        if ($this->sortField === 'stock') {
+        // Ordenamiento: mapear campos de UI a columnas de BD
+        $columnMap = [
+            'producto' => 'name',
+            'nombre' => 'name',
+            'sku' => 'sku',
+            'stock' => 'stock', // manejado como caso especial
+            'producto_id' => 'id',
+        ];
+
+        $dbSortField = $columnMap[$this->sortField] ?? $this->sortField;
+
+        if ($dbSortField === 'stock' || $this->sortField === 'stock') {
             $query->join('inventories', 'products.id_inventory', '=', 'inventories.id')
                   ->orderBy('inventories.cantidad_inventario', $this->sortDirection)
                   ->select('products.*');
         } else {
-            $query->orderBy($this->sortField, $this->sortDirection);
+            $query->orderBy($dbSortField, $this->sortDirection);
         }
 
         $products = $query->get();

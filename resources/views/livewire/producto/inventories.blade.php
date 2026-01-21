@@ -1,7 +1,7 @@
 <div class="min-h-screen">
     {{-- Mensaje de éxito --}}
     @if (session()->has('message'))
-        <div class="px-4 sm:px-6 lg:px-8 py-4">
+        <div class="px- sm:px-6 lg:px-8 py-4">
             <flux:callout dismissible variant="success" icon="check-circle" heading="{{ session('message') }}" />
         </div>
     @endif
@@ -14,7 +14,7 @@
     @endif
 
     {{-- Widget de alertas --}}
-    <div class="px-2 sm:px-4 lg:px-2 mb-4">
+    <div class="px-2 sm:px-4 lg:px-2 mb-2">
         
         @php
             // Preferir propiedad proviniente del componente Livewire si existe

@@ -17,6 +17,8 @@ class CreateCollectionsTable extends Migration
             $table->unsignedBigInteger('id_publicacion')->nullable();
             $table->string('image_url')->nullable();
             $table->unsignedBigInteger('id_status_collection')->nullable();
+            $table->json('conditions')->nullable();
+            $table->string('condition_match')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

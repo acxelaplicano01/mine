@@ -45,6 +45,21 @@ class Products extends Model
         'cobrar_impuestos' => 'boolean',
     ];
 
+    public function typeProduct()
+    {
+        return $this->belongsTo(TypeProduct::class, 'id_type_product');
+    }
+
+    public function distribuidor()
+    {
+        return $this->belongsTo(\App\Models\Distribuidor\Distribuidores::class, 'id_distributor');
+    }
+
+    public function etiqueta()
+    {
+        return $this->belongsTo(\App\Models\Etiquetas\Etiquetas::class, 'id_etiquetas');
+    }
+
     public function variants()
     {
         return $this->hasMany(VariantProduct::class, 'product_id');
