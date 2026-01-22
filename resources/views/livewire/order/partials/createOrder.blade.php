@@ -454,7 +454,7 @@
                                     @endif
                                 </div>
                                 {{-- Botones de acción --}}
-                                <div class="flex gap-3 pt-4 w-70 justify-end">
+                                <div class="flex gap-3 pt-4 w-70">
                                     {{-- Botón Enviar factura y Crear pedido o Marcar como pagado --}}
                                     @if($showPaymentTerms)
                                         {{-- Si tiene pago con vencimiento posterior, solo crear orden --}}

@@ -96,6 +96,12 @@ return [
                         ->setHeroIcon('plus-circle')
                         ->setItems([])
                         ->setEndBlock('orders_purchases_create'),
+                    RkNavigation::make('order_purchases_receive')
+                        ->setLabel('Recepción de Orden de Compra')
+                        ->setDescription('Recepción de una orden de compra')
+                        ->setHeroIcon('inbox-arrow-down')
+                        ->setItems([])
+                        ->setEndBlock('order_purchases_receive'),
                 ])
                 ->setEndBlock('orders_purchases'),
                 

@@ -53,7 +53,7 @@ class Orders extends Component
 
     protected $rules = [
         'product_id' => 'required|exists:products,id',
-        'id_customer' => 'required|exists:customers,id',
+        'id_customer' => 'nullable|exists:customers,id',
         'quantity' => 'required|integer|min:1',
         'total_price' => 'required|numeric|min:0',
         'note' => 'nullable|string',

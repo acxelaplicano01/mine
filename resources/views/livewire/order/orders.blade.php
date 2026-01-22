@@ -195,10 +195,21 @@
                         <td class="px-4 py-3">
                             <flux:checkbox wire:model.live.debounce.150ms="selected" value="{{ $order->id }}" />
                         </td>
-                            <td class="px-4 py-3">
+                            <td class="flex space-x-2 px-4 py-3">
                                 <a href="#" class="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400">
                                     #{{ str_pad($order->id, 4, '0', STR_PAD_LEFT) }}
                                 </a>
+                                @if($order->note)
+                                    <flux:tooltip>
+                                        <flux:button icon="document-text" size="xs" variant="ghost" />
+
+                                        <flux:tooltip.content class="max-w-[20rem] space-y-2">
+                                            <p>
+                                                {{ $order->note ?? 'Sin nota' }}
+                                            </p>
+                                        </flux:tooltip.content>
+                                    </flux:tooltip>
+                                @endif
                             </td>
                             <td class="px-4 py-3">
                                 <div class="text-sm text-zinc-900 dark:text-white">
@@ -207,7 +218,31 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div class="text-sm text-zinc-900 dark:text-white">
-                                    {{ $order->customer->name ?? 'Sin cliente' }}
+                                    <flux:dropdown>
+                                        <flux:button variant="ghost" icon:trailing="chevron-down" size="xs">
+                                            {{  $order->customer?->name . ' ' . $order->customer?->last_name ?? 'Sin cliente' }}
+                                        </flux:button>
+                                        <flux:menu class="min-w-40">
+                                            <flux:menu.item>
+                                                <div class="text-sm text-zinc-900 dark:text-white">
+                                                    <strong>Correo:</strong> {{ $order->customer?->email ?? '—' }}
+                                                </div>
+                                            </flux:menu.item>
+                                            <flux:menu.item>
+                                                <div class="text-sm text-zinc-900 dark:text-white">
+                                                    <strong>Teléfono:</strong> {{ $order->customer?->phone ?? '—' }}
+                                                </div>
+                                            </flux:menu.item>
+                                            <flux:menu.item>
+                                                <div class="text-sm text-zinc-900 dark:text-white">
+                                                    <strong>Dirección:</strong> {{ $order->customer?->address ?? '—' }}
+                                                </div>
+                                            </flux:menu.item>
+                                            <flux:button size="sm" class="w-full">
+                                                Ver cliente
+                                            </flux:button>
+                                        </flux:menu>
+                                    </flux:dropdown.  >
                                 </div>
                             </td>
                             <td class="px-4 py-3">
@@ -259,7 +294,33 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div class="text-sm text-zinc-900 dark:text-white">
-                                    {{ $order->items->count() }} artículo{{ $order->items->count() != 1 ? 's' : '' }}
+                                    <flux:dropdown>
+                                        
+
+                                    </flux:dropdown>
+                                    <flux:dropdown>
+                                        <flux:button variant="ghost" icon:trailing="chevron-down" size="xs">
+                                            {{ $order->items->sum('quantity') }} artículo{{ $order->items->sum('quantity') != 1 ? 's' : '' }}
+                                        </flux:button>
+                                        <flux:menu class="min-w-56">
+                                            @foreach($order->items as $item)
+                                                <flux:menu.item class="flex items-center gap-3 py-2">
+                                                    @php
+                                                        $img = $item->product->multimedia[0] ?? null;
+                                                    @endphp
+                                                    @if($img)
+                                                        <img src="{{ asset('storage/' . $img) }}" alt="{{ $item->product->name }}" class="w-8 h-8 object-cover rounded" />
+                                                    @else
+                                                        <div class="w-8 h-8 bg-zinc-200 rounded flex items-center justify-center text-xs text-zinc-500">—</div>
+                                                    @endif
+                                                    <div class="flex-1 min-w-0">
+                                                        <div class="font-medium text-zinc-900 dark:text-white truncate">{{ $item->product->name }}</div>
+                                                        <div class="text-xs text-zinc-500 dark:text-zinc-400">Cantidad: {{ $item->quantity }}</div>
+                                                    </div>
+                                                </flux:menu.item>
+                                            @endforeach
+                                        </flux:menu>
+                                    </flux:dropdown>
                                 </div>
                             </td>
                             <td class="px-4 py-3">
