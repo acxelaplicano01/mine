@@ -743,6 +743,16 @@ class CreateOrder extends Component
                 'fecha_vencimiento' => $this->fecha_vencimiento,
             ]);
 
+            // Guardar todas las notas en la tabla order_notes
+            if (is_array($this->notes) && count($this->notes) > 0) {
+                foreach ($this->notes as $note) {
+                    \App\Models\Order\OrderNote::create([
+                        'order_id' => $order->id,
+                        'note' => $note['text'],
+                    ]);
+                }
+            }
+
             // Crear los items del pedido
             foreach ($this->selectedProducts as $item) {
                 \App\Models\Order\OrderItems::create([
@@ -761,7 +771,6 @@ class CreateOrder extends Component
             session()->flash('message', 'Pedido creado exitosamente con estado pendiente de pago.');
 
             return redirect()->route('orders');
-            
         } catch (\Exception $e) {
             \Log::error('Error al crear pedido: ' . $e->getMessage());
             session()->flash('error', 'Error al crear el pedido: ' . $e->getMessage());
@@ -793,6 +802,16 @@ class CreateOrder extends Component
                 'fecha_vencimiento' => $this->fecha_vencimiento,
             ]);
 
+            // Guardar todas las notas en la tabla order_notes
+            if (is_array($this->notes) && count($this->notes) > 0) {
+                foreach ($this->notes as $note) {
+                    \App\Models\Order\OrderNote::create([
+                        'order_id' => $order->id,
+                        'note' => $note['text'],
+                    ]);
+                }
+            }
+
             // Crear los items del pedido
             foreach ($this->selectedProducts as $item) {
                 \App\Models\Order\OrderItems::create([
@@ -811,7 +830,6 @@ class CreateOrder extends Component
             session()->flash('message', 'Pedido creado y marcado como pagado exitosamente.');
 
             return redirect()->route('orders');
-            
         } catch (\Exception $e) {
             \Log::error('Error al crear pedido como pagado: ' . $e->getMessage());
             session()->flash('error', 'Error al crear el pedido: ' . $e->getMessage());

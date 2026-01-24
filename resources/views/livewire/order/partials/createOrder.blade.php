@@ -478,11 +478,9 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    {{-- Columna lateral (derecha) --}}
-                    <div class="space-y-4">
-                        {{-- Notas --}}
+                        {{-- Notas de seguimiento 
+                        @if($order_id)
                         <div class="bg-white dark:bg-white/5 rounded-lg shadow-sm">
                             <div
                                 class="p-4 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-700">
@@ -534,7 +532,27 @@
                                 @endif
                             </div>
                         </div>
+                        @endif --}}
+                    </div>
 
+                    {{-- Columna lateral (derecha) --}}
+                    <div class="space-y-4">
+                        {{-- Nota principal de la orden --}}
+                        <div class="bg-white dark:bg-white/5 rounded-lg shadow-sm">
+                            <div class="p-4 border-b border-zinc-200 dark:border-zinc-700">
+                                <h3 class="text-base font-semibold text-zinc-900 dark:text-white">Nota principal</h3>
+                            </div>
+                            <div class="p-4">
+                                <flux:textarea
+                                    wire:model="note"
+                                    placeholder="Agrega una nota a la orden (opcional)"
+                                    rows="2"
+                                    class="w-full text-sm"
+                                />
+                            </div>
+                        </div>
+
+                        
                         {{-- Cliente --}}
                         <div class="bg-white dark:bg-white/5 rounded-lg shadow-sm">
                             <div

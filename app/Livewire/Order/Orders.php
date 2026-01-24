@@ -19,7 +19,7 @@ class Orders extends Component
     public $search = '';
     public $perPage = 10;
     public $sortField = 'id';
-    public $sortDirection = 'asc';
+    public $sortDirection = 'desc';
     public $selected = [];
     public $selectAll = false;
     public $currentOrderIds = []; // IDs de los pedidos en la página actual

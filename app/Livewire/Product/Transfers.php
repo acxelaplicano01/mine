@@ -20,7 +20,7 @@ class Transfers extends Component
     public $search = '';
     public $perPage = 10;
     public $sortField = 'id';
-    public $sortDirection = 'asc';
+    public $sortDirection = 'desc';
     public $selected = [];
     public $selectAll = false;
     public $currentTransferIds = [];
@@ -333,6 +333,34 @@ class Transfers extends Component
     {
         $this->showFilterDropdown = !$this->showFilterDropdown;
         $this->filterSearch = '';
+    }
+
+    public function setFilter($filter)
+    {
+        // Limpiar filtros actuales
+        $this->activeFilters = [];
+        
+        // Aplicar el filtro seleccionado
+        switch($filter) {
+            case 'todos':
+                $this->activeFilter = 'todos';
+                break;
+            case 'pendientes':
+                $this->activeFilter = 'pendientes';
+                $this->addFilter('estado_pendiente', null, 'Estado: Pendiente');
+                break;
+            case 'en_transito':
+                $this->activeFilter = 'en_transito';
+                $this->addFilter('estado_en_transito', null, 'Estado: En tránsito');
+                break;
+            case 'completados':
+                $this->activeFilter = 'completados';
+                $this->addFilter('estado_completado', null, 'Estado: Completado');
+                break;
+        }
+        
+        // Reset pagination
+        $this->resetPage();
     }
 
     public function render()

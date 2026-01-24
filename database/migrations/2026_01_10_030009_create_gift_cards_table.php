@@ -12,6 +12,7 @@ class CreateGiftCardsTable extends Migration
             $table->id();
             $table->string('code')->nullable();
             $table->decimal('valor_inicial', 16, 4)->nullable();
+            $table->decimal('valor_usado', 16, 4)->default(0);
             $table->dateTime('expiry_date')->nullable();
             $table->unsignedBigInteger('id_customer')->nullable();
             $table->unsignedBigInteger('id_status_gift_card')->nullable();
